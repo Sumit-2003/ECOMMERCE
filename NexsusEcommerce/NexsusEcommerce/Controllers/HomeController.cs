@@ -1,38 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NexsusEcommerce.Models;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace NexsusEcommerce.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly EcommerceContext _context;
+        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(EcommerceContext context)
+        public HomeController(ILogger<HomeController> logger)
         {
-            _context = context;
+            _logger = logger;
         }
 
-        public async Task<IActionResult> CreateHome()
+        public IActionResult Index()
         {
-            // Fetch products and associated images from the database
-            var products = await _context.Products
-                .Include(p => p.ProductImages) // Ensure images are included
-                .ToListAsync();
+            return View();
+        }
 
-            // Optionally, fetch categories if needed for other parts of the view
-            var categories = await _context.Categories.ToListAsync();
+        public IActionResult Privacy()
+        {
+            return View();
+        }
 
-            // Create a view model to pass to the view
-            var viewModel = new HomeViewModel
-            {
-                Products = products,
-                Categories = categories
-            };
-
-            return View(viewModel);
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }
 }
