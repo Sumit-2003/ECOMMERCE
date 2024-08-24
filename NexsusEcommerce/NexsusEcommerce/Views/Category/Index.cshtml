@@ -1,0 +1,46 @@
+﻿@model IEnumerable<NexsusEcommerce.Models.Category>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="container mx-auto mt-8 px-4">
+    <h1 class="text-4xl font-extrabold text-gray-900 mb-8">Categories</h1>
+
+    <!-- Button to Create a New Category -->
+    <div class="mb-4">
+        <a href="@Url.Action("Create", "Category")" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+            Create New Category
+        </a>
+    </div>
+
+    <!-- Table to Display Categories -->
+    <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+        <thead>
+            <tr>
+                <th class="py-2 px-4 border-b">Category Name</th>
+                <th class="py-2 px-4 border-b">Description</th>
+                <th class="py-2 px-4 border-b">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var category in Model)
+            {
+                <tr>
+                    <td class="py-2 px-4 border-b">@category.CategoryName</td>
+                    <td class="py-2 px-4 border-b">@category.Description</td>
+                    <td class="py-2 px-4 border-b">
+                        <!-- Edit Button -->
+                        <a href="@Url.Action("Edit", "Category", new { id = category.CategoryId })" class="text-blue-500 hover:underline">
+                            Edit
+                        </a>
+                        <!-- Delete Button -->
+                        <a href="@Url.Action("Delete", "Category", new { id = category.CategoryId })" class="text-red-500 hover:underline ml-4">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
