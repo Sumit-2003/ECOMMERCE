@@ -35,5 +35,9 @@ public partial class User
 
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 
+    public virtual ICollection<CouponVerification> CouponVerifications { get; set; } = new List<CouponVerification>();
+
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

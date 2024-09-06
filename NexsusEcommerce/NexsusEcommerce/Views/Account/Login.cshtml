@@ -1,0 +1,136 @@
+﻿@model NexsusEcommerce.Models.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('/images/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+/
+      .container1 {
+            background: rgba(255, 255, 255, 0.9); 
+            border-radius: 10px;
+            padding: 2rem;
+            max-width: 500px; 
+            margin-top: 5rem;
+        }
+
+        h2 {
+            color: #333; 
+        }
+
+        .alert {
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #004085;
+            }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+            .btn-secondary:hover {
+                background-color: #565e64;
+                border-color: #4e545b;
+            }
+
+        .form-control:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+        }
+
+        .form-check-label {
+            color: #333;
+        }
+
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container1 mt-5" style="width:60%;align-content:center;margin-left:20%;">
+        <h2 class="text-center mb-4">Login</h2>
+
+     
+        @{
+            var successMessage = ViewBag.SuccessMessage as string;
+        }
+
+        @if (!string.IsNullOrEmpty(successMessage))
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @successMessage
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <div class="row justify-content-center"style="align-items:center;">
+            <div class="col-12">
+                <form asp-action="Login" method="post" class="bg-light p-4 border rounded shadow-sm">
+                    
+                    <div class="mb-3">
+                        <label asp-for="Username" class="form-label"placeholder="enter your name">Username</label>
+                        <input asp-for="Username" class="form-control" placeholder="enter your name" />
+                        <span asp-validation-for="Username" placeholder="enter your name" class="text-danger"></span>
+                        <div class="text-danger mt-2" asp-validation-for="Username"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Password</label>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="enter your password" />
+                        <span asp-validation-for="Password" placeholder="enter your " class="text-danger"></span>
+                        <div class="text-danger mt-2" asp-validation-for="Password"></div>
+                    </div>
+
+                    <!-- Remember Me -->
+                    @* <div class="mb-3 form-check">
+                        <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
+                        <label asp-for="RememberMe" class="form-check-label">Remember me</label>
+                    </div> *@
+
+                
+                    <button type="submit" class="btn btn-primary w-100">Login</button>
+
+                    <a asp-controller="Account" asp-action="Register" class="btn btn-secondary w-100 mt-3">Register</a>
+                </form>
+            </div>
+        </div>
+    </div>
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oB9uTj6BTw61H1pDqaP8m/8+Ecb+gbB2W3d0H6DlfC83j4GQZbROj+kF6Y6D3uY1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-czQqvA2QK0fZrEhvW8D0SxhxGB6e6vlf+ILB2MJJ5ZtEOGy3fIMR8S5D1uZ0YBD" crossorigin="anonymous"></script>
+</body>
+</html>

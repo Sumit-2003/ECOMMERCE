@@ -1,0 +1,87 @@
+﻿@model NexsusEcommerce.Models.Product
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@3.0.0/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="css/tiny-slider.css" rel="stylesheet">
+    <link href="css/Index.css" rel="stylesheet">
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Popper.js, necessary for Bootstrap 4 dropdowns -->
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+<body>
+    <div class="container mx-auto mt-8 px-4">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-8">Edit Product</h1>
+
+        <form asp-action="Edit" method="post" enctype="multipart/form-data" class="bg-white border border-gray-300 rounded-lg shadow-lg p-6 max-w-lg mx-auto">
+            <input type="hidden" asp-for="ProductId" />
+
+            <div class="mb-6">
+                <label asp-for="ProductName" class="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+                <input asp-for="ProductName" class="border border-gray-300 p-3 w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm" required />
+                <span asp-validation-for="ProductName" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-6">
+                <label asp-for="Description" class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea asp-for="Description" class="border border-gray-300 p-3 w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm" rows="4"></textarea>
+                <span asp-validation-for="Description" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-6">
+                <label asp-for="Price" class="block text-sm font-medium text-gray-700 mb-2">Price</label>
+                <input asp-for="Price" type="number" step="0.01" class="border border-gray-300 p-3 w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm" required />
+                <span asp-validation-for="Price" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-6">
+                <label asp-for="StockQuantity" class="block text-sm font-medium text-gray-700 mb-2">Stock Quantity</label>
+                <input asp-for="StockQuantity" type="number" class="border border-gray-300 p-3 w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm" required />
+                <span asp-validation-for="StockQuantity" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-6">
+                <label asp-for="CategoryId" class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                <select asp-for="CategoryId" class="border border-gray-300 p-3 w-full rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:text-sm" asp-items="@(new SelectList(ViewBag.Categories, "CategoryId", "CategoryName"))">
+                    <option value="">Select a category</option>
+                </select>
+                <span asp-validation-for="CategoryId" class="text-red-500 text-sm"></span>
+            </div>
+
+            <div class="mb-6">
+                <label asp-for="ImageData" class="block text-sm font-medium text-gray-700 mb-2">Upload Image (optional)</label>
+                <input type="file" asp-for="ImageData" class="block w-full text-sm text-gray-500 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            </div>
+
+            <div class="flex space-x-4">
+                <a asp-action="Index" class="bg-indigo-600 text-white px-6 py-3 rounded-md shadow-sm text-base font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Save Changes </a>
+                <a asp-action="Index" class="bg-gray-500 text-white px-6 py-3 rounded-md shadow-sm text-base font-medium hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">Cancel</a>
+            </div>
+        </form>
+    </div>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/tiny-slider.js"></script>
+    <script src="js/custom.js"></script>
+
+
+   
+
+</body>
+</html>

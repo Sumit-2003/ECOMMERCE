@@ -1,0 +1,260 @@
+﻿@model IEnumerable<dynamic>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product List</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f8fc;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            height: 600px;
+        }
+
+        .product-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 products per row */
+            gap: 20px;
+            padding: 20px;
+            max-height: 90vh; /* Set the max height to trigger overflow */
+            overflow-y: scroll;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+
+            .product-container::-webkit-scrollbar {
+                display: none; /* Hide scrollbar in Webkit browsers */
+            }
+
+        .Frame {
+            max-width: 300px;
+            height: 450px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+            .Frame:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+            }
+
+        .image {
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            background-color: #fff;
+        }
+
+            .image img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+                border-radius: 15px;
+                transition: transform 0.3s ease;
+            }
+
+        .Frame:hover .image img {
+            transform: scale(1.05);
+        }
+
+        .card-dis {
+            width: 100%;
+            text-align: center;
+        }
+
+        .card-title {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .card-text {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .card-price {
+            font-size: 20px;
+            margin-bottom: 15px;
+            color: #1e90ff;
+            font-weight: bold;
+        }
+
+        /* Add styles for the "Add To Cart" button */
+        .add-to-cart-button {
+            background-color: #28a745; /* Green background */
+            color: #fff; /* White text */
+            border: none; /* Remove default border */
+            padding: 10px 20px; /* Padding for the button */
+            font-size: 16px; /* Font size */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s ease, transform 0.3s ease; /* Smooth transition for background and scale */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px; /* Space between icon and text */
+        }
+
+            /* Hover effect */
+            .add-to-cart-button:hover {
+                background-color: #218838; /* Darker green on hover */
+                transform: scale(1.05); /* Slightly enlarge the button */
+            }
+
+            /* Add cart icon */
+            .add-to-cart-button::before {
+                content: "\f07a"; /* FontAwesome shopping cart icon */
+                font-family: "FontAwesome";
+                margin-right: 5px; /* Space between icon and text */
+                font-size: 18px; /* Icon size */
+            }
+
+            /* Add animation when clicked */
+            .add-to-cart-button:active {
+                transform: scale(0.95); /* Slightly shrink the button when clicked */
+            }
+
+        media (max-width: 768px) {
+            .product-container
+
+        {
+            grid-template-columns: 1fr; /* One product per row on smaller screens */
+        }
+
+        .Frame {
+            max-width: 90%;
+        }
+
+        }
+    </style>
+</head>
+<body>
+    <!-- Placeholder for product list -->
+    <div id="product-list">
+        @* Products will be loaded here *@
+        @if (!Model.Any())
+        {
+            <p>No products available in this category.</p>
+        }
+        else
+        {
+            <div class="product-container">
+                @foreach (var product in Model)
+                {
+                    <article class="Frame">
+                        <form asp-controller="Cart" asp-action="AddCartToDb" method="post">
+                            <div class="cart">
+                                <div class="image">
+                                    @if (product.ImageData != null)
+                                    {
+                                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(product.ImageData)" alt="@product.ProductName" />
+                                    }
+                                </div>
+                                <div class="card-dis">
+                                    <h5 class="card-title">@product.ProductName</h5>
+                                    <p class="card-text">@product.Description</p>
+                                    <p class="card-price">@product.Price.ToString("C")</p>
+                                    <button type="button" data-product-id="@product.ProductId" class="add-to-cart-button">
+                                        Add To Cart
+                                    </button>
+
+
+
+
+                                </div>
+                            </div>
+                        </form>
+                    </article>
+                }
+            </div>
+        }
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Animation for Add to Cart
+            $('.btn').click(function (e) {
+                e.preventDefault();
+                var cart = $('#cart-icon'); // Assuming you have an element with id "cart-icon"
+                var imgtodrag = $(this).closest('.Frame').find(".image img").eq(0);
+                if (imgtodrag) {
+                    var imgclone = imgtodrag.clone()
+                        .offset({
+                            top: imgtodrag.offset().top,
+                            left: imgtodrag.offset().left
+                        })
+                        .css({
+                            'opacity': '0.8',
+                            'position': 'absolute',
+                            'height': '150px',
+                            'width': '150px',
+                            'z-index': '100'
+                        })
+                        .appendTo($('body'))
+                        .animate({
+                            'top': cart.offset().top + 10,
+                            'left': cart.offset().left + 10,
+                            'width': 75,
+                            'height': 75
+                        }, 1000, 'easeInOutExpo');
+                    imgclone.animate({
+                        'width': 0,
+                        'height': 0
+                    }, function () {
+                        $(this).detach();
+                    });
+                }
+
+                $(this).closest('form').submit();
+            });
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.add-to-cart-button').on('click', function () {
+                var productId = $(this).data('product-id');
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("AddCartToDb", "Cart")', // Replace "Cart" with your actual controller name if needed
+                    data: { id: productId },
+                    success: function (response) {
+                        if (response.success) {
+                            // Display success message or update UI
+                            alert(response.message); // Or update a specific element on the page
+                            // Optionally, update the cart count or other UI elements
+                        } else {
+                            // Display error message or handle failure
+                            alert(response.message);
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while adding the product to the cart.');
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>

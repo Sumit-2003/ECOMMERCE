@@ -1,0 +1,42 @@
+﻿@{
+    var orders = ViewData["Orders"] as IEnumerable<NexsusEcommerce.Models.Order>;
+}
+
+<h2>Order Confirmation</h2>
+
+<p><strong>Username:</strong> @ViewData["UserName"]</p>
+<p><strong>Address:</strong> @ViewData["Address"]</p>
+<p><strong>Email:</strong> @ViewData["Email"]</p>
+
+<h3>Order Details</h3>
+@if (orders != null && orders.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order Date</th>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in orders)
+            {
+                <tr>
+                    <td>@(order.OrderDate.HasValue ? order.OrderDate.Value.ToString("MM/dd/yyyy") : "N/A")</td>
+l
+                    <td>@order.Product.ProductName</td>
+                    <td>@order.Quantity</td>
+                    <td>@order.Product.Price.ToString("C")</td>
+                    <td>@(order.Quantity * order.Product.Price).ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No orders found.</p>
+}

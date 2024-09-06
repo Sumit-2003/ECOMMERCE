@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using NexsusEcommerce.Models;
 using System.Linq;
 
@@ -13,20 +14,22 @@ namespace NexsusEcommerce.Controllers
             _context = context;
         }
 
-        // Display all categories
+      
         public IActionResult Index()
         {
             var categories = _context.Categories.ToList();
             return View(categories);
         }
 
-        // GET: Category/Create
+    
+        [Authorize]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Category/Create
+     
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category category)
@@ -40,7 +43,7 @@ namespace NexsusEcommerce.Controllers
             return View(category);
         }
 
-        // GET: Category/Edit/5
+
         public IActionResult Edit(int id)
         {
             var category = _context.Categories.Find(id);
@@ -51,7 +54,6 @@ namespace NexsusEcommerce.Controllers
             return View(category);
         }
 
-        // POST: Category/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Edit(int id, Category category)
@@ -70,7 +72,7 @@ namespace NexsusEcommerce.Controllers
             return View(category);
         }
 
-        // GET: Category/Delete/5
+
         public IActionResult Delete(int id)
         {
             var category = _context.Categories.Find(id);

@@ -20,4 +20,6 @@ public partial class Coupon
     public DateTime? CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
+
+    public virtual ICollection<CouponVerification> CouponVerifications { get; set; } = new List<CouponVerification>();
 }

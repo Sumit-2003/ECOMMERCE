@@ -1,0 +1,26 @@
+﻿<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function addToCart(productId) {
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("AddCartToDb", "Cart")', 
+            data: { id: productId },
+            success: function (response) {
+                console.log('Response received:', response); 
+                if (response.success) {
+                    alert(response.message); 
+                } else {
+                    if (response.redirectToLogin) {
+                        console.log('Redirecting to login page...'); 
+                        window.location.href = 'https://localhost:7016/Account/Login'; 
+                    } else {
+                        alert(response.message); 
+                    }
+                }
+            },
+            error: function () {
+                alert('An error occurred while adding the product to the cart.');
+            }
+        });
+    }
+</script>

@@ -1,28 +1,138 @@
 ﻿<!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - NexsusEcommerce</title>
+
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="~/css/tinySlider.css" rel="stylesheet">
+    <link href="~/css/Index.css" rel="stylesheet">
+
+    <style>
+        .active-link1 {
+            color: #ffffff !important;
+            border: 2px solid #F8EDED;
+            border-radius: 5px;
+            padding: 5px 10px;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px #000000;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+            .active-link1:hover {
+                background-color: #0056b3;
+                color: #ffffff;
+            }
+    </style>
 </head>
+
 <body>
     <header>
-        <nav class="bg-gray-800 p-4">
-            <div class="container mx-auto flex justify-between items-center">
-                <a class="text-white text-2xl font-semibold" href="/">NexsusEcommerce</a>
-                <div>
-                    <a class="text-white px-4 py-2 hover:bg-gray-700 rounded" href="@Url.Action("Index", "Home")">Home</a>
-                    <a class="text-white px-4 py-2 hover:bg-gray-700 rounded" href="@Url.Action("Index", "Category")">Categories</a>
+        <nav class="custom-navbar navbar navbar-expand-md navbar-dark bg-dark" aria-label="Furni navigation bar" style="background: linear-gradient(to bottom, #f0f0f0, #d9d9d9); color: #333;">
+            <div class="container">
+                <a class="navbar-brand mt-1" href="#">
+                    <img src="~/images/BG.png" style="height:58px;width:111.56px" alt="Brand Logo">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni" aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-                    <!-- Add other links as needed -->
+                @* <form class="form-inline my-2 my-lg-0 ms-3" asp-action="Search" asp-controller="Home" method="get">
+                    <div class="input-group">
+                        <input class="form-control" type="search" placeholder="Search" name="query" aria-label="Search">
+                        <button class="btn btn-outline-secondary" type="submit">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </form> *@
+
+
+
+
+
+
+
+
+                <div class="collapse navbar-collapse" id="navbarsFurni">
+                    <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                        <li>
+                            <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" && ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active-link1" : "")"
+                               asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        @if (!User.Identity.IsAuthenticated || !User.IsInRole("Admin"))
+                        {
+                            <li>
+                                <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Categories" && ViewContext.RouteData.Values["controller"].ToString() == "Home" ? "active-link1" : "")"
+                                   asp-controller="Home" asp-action="Categories">Products</a>
+                            </li>
+                        }
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <li>
+                                <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" && ViewContext.RouteData.Values["controller"].ToString() == "Category" ? "active-link1" : "")"
+                                   asp-controller="Category" asp-action="Index">Categories</a>
+                            </li>
+                            <li>
+                                <a class="nav-link @(ViewContext.RouteData.Values["action"].ToString() == "Index" && ViewContext.RouteData.Values["controller"].ToString() == "Coupon" ? "active-link1" : "")"
+                                   asp-controller="Coupon" asp-action="Index">Coupon Management</a>
+                            </li>
+                        }
+                        @if (Context.Session.GetInt32("UserId") != null)
+                        {
+                            <li>
+                                <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="nav-link btn btn-link">Logout</button>
+                                </form>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img src="~/images/user.svg" alt="User Icon">
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                                    <a class="dropdown-item dark-text" href="#"><strong>Username:</strong> @Context.Session.GetString("Username")</a>
+                                    <a class="dropdown-item" href="#"><strong>Email:</strong> @Context.Session.GetString("Email")</a>
+                                    <a class="dropdown-item" href="#"><strong>Mobile:</strong> @Context.Session.GetString("MobileNumber")</a>
+                                    <a class="dropdown-item" href="#"><strong>Address:</strong> @Context.Session.GetString("Address")</a>
+                                    <div class="dropdown-divider"></div>
+                                    <form asp-controller="Account" asp-action="Logout" method="post" style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="dropdown-item">Logout</button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+
+                        else
+                        {
+                            <li><a class="nav-link" asp-controller="Account" asp-action="Login">Login</a></li>
+                        }
+                        @if (!User.Identity.IsAuthenticated || !User.IsInRole("Admin"))
+                        {
+                            <li><a class="nav-link" asp-controller="Cart" asp-action="Index"><img src="~/images/cart.svg" alt="Cart"></a></li>
+                        }
+                    </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <main class="container mx-auto mt-4">
+
+    <main>
         @RenderBody()
     </main>
+   
+    @RenderSection("Scripts", required: false)
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ttT7YORLl26/PHjZrdeTEAhe7e1AMJJ4ctzowP7FUH+dltMyMoV2Cwo7" crossorigin="anonymous"></script>
 </body>
+
 </html>

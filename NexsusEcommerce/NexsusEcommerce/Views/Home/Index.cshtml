@@ -1,8 +1,573 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<!-- /*
+* Bootstrap 5
+* Template Name: Furni
+* Template Author: Untree.co
+* Template URI: https://untree.co/
+* License: https://creativecommons.org/licenses/by/3.0/
+*/ -->
+@model IEnumerable<NexsusEcommerce.Models.Coupon>
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="Untree.co">
+	<link rel="shortcut icon" href="favicon.png">
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+	<meta name="description" content="" />
+	<meta name="keywords" content="bootstrap, bootstrap4" />
+
+	
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+	<link href="css/tiny-slider.css" rel="stylesheet">
+	<link href="css/Index.css" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+
+	<title>Furni Free Bootstrap 5 Template for Furniture and Interior Design Websites by Untree.co </title>
+	<style>
+		#userDropdown::after {
+			display: none;
+		}
+
+		.category-item {
+			margin: 0 20px; 
+			text-align: center;
+		}
+
+			.category-item img {
+				border-radius: 50%;
+				max-width: 160px; 
+				height: 160px;
+				margin: auto;
+			}
+
+			.category-item h5 {
+				margin-top: 15px;
+				font-size: 16px;
+				margin-left:45px;
+			}
+
+		.carousel-item .row {
+			justify-content: center; 
+		}
+
+		.image-container img {
+			border-radius: 50%;
+			max-width: 160px;
+			height: 160px;
+			margin: auto;
+		}
+
+		.overlay-text {
+			position: absolute;
+			bottom: 10px; 
+			left: 50%;
+			transform: translateX(-50%);
+			color: white; 
+			font-size: 14px;
+			background-color: rgba(0, 0, 0, 0.5); 
+			padding: 5px 10px;
+			border-radius: 10px;
+			width: calc(100% - 20px); 
+			text-align: center;
+		}
+
+	</style>
+
+
+</head>
+
+
+<body>
+
+	
+	<div class="hero" style="background: linear-gradient(to bottom, #9ca3af 10%, #cbd5e1 40%, #e5e7eb 80%);">
+		
+		<div class="container">
+			<div class="row justify-content-between">
+				<div class="col-lg-5">
+					<div class="intro-excerpt">
+						<h1>Be Satisfied <span class="d-block">Shop At Nexsus.</span></h1>
+						<p class="mb-4" style="color: #333;">Discover our exclusive collection of stylish and contemporary home furnishings. Transform your space with unique designs and high-quality products curated just for you.</p>
+						<p><a href="shop.html" class="btn btn-secondary me-2" style="color: #fff; background-color: #000; border-color: #000;">Shop Now</a><a href="explore.html" class="btn btn-white-outline" style="color: #000; border-color: #000;">Explore</a></p>
+					</div>
+
+				</div>
+				<div class="col-lg-7">
+					<div class="hero-img-wrap">
+						<img src="images/couch.png" class="img-fluid">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- End Hero Section -->
+	<!-- Start Product Section -->
+	<div class="product-section">
+		<div class="container">
+			<div class="row">
+
+				<!-- Start Column 1 -->
+				<!-- Start Column 1 -->
+				<div class="col-md-12 col-lg-3 mb-5 mb-lg-0">
+					<h2 class="mb-4 section-title">Discover Premium Products</h2>
+					<p class="mb-4">Explore our collection of top-quality items crafted with the finest materials. Whether you're looking for the latest trends or timeless classics, we've got something for everyone.</p>
+					<p><a href="shop.html" class=" btn btn-secondary me-2">Shop Now</a></p>
+				</div>
+
+				<!-- End Column 1 -->
+				<!-- Start Column 2 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+			<a class="product-item" href="@Url.Action("Categories", "Home")">
+						<img src="images/product-1.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Nordic Chair</h3>
+						<strong class="product-price">₹5000.00</strong>
+
+						<span class="icon-cross">
+							<img src="images/cross.svg" class="img-fluid">
+						</span>
+					</a>
+				</div>
+				<!-- End Column 2 -->
+				<!-- Start Column 3 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+				
+						<a class="product-item" href="@Url.Action("Categories", "Home")">
+						<img src="images/product-2.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Kruzo Aero Chair</h3>
+						<strong class="product-price">₹7800.00</strong>
+
+						<span class="icon-cross">
+							<img src="images/cross.svg" class="img-fluid">
+						</span>
+					</a>
+				</div>
+				<!-- End Column 3 -->
+				<!-- Start Column 4 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5 mb-md-0">
+					<a class="product-item" href="@Url.Action("Categories", "Home")">
+
+						<img src="images/product-3.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Ergonomic Chair</h3>
+						<strong class="product-price">₹3,542.00</strong>
+
+						<span class="icon-cross">
+							<img src="images/cross.svg" class="img-fluid">
+						</span>
+					</a>
+				</div>
+				<!-- End Column 4 -->
+
+			</div>
+		</div>
+	</div>
+	<!-- End Product Section -->
+	<!-- Start Why Choose Us Section -->
+	<div class="why-choose-section">
+		<div class="container">
+			<div class="row justify-content-between">
+				<div class="col-lg-6">
+					<h2 class="section-title">Why Choose Us</h2>
+					<p>Donec vitae odio quis nisl dapibus malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.</p>
+
+					<div class="row my-5">
+						<div class="col-6 col-md-6">
+							<div class="feature">
+								<div class="icon">
+									<img src="images/truck.svg" alt="Image" class="imf-fluid">
+								</div>
+								<h3>Fast &amp; Free Shipping</h3>
+								<p>Experience the convenience of fast and free shipping with every order.</p>
+							</div>
+						</div>
+
+						<div class="col-6 col-md-6">
+							<div class="feature">
+								<div class="icon">
+									<img src="images/bag.svg" alt="Image" class="imf-fluid">
+								</div>
+								<h3>Easy to Shop</h3>
+								<p> Enjoy a hassle-free shopping experience with features designed to simplify your purchase journey.</p>
+							</div>
+						</div>
+
+						<div class="col-6 col-md-6">
+							<div class="feature">
+								<div class="icon">
+									<img src="images/support.svg" alt="Image" class="imf-fluid">
+								</div>
+								<h3>24/7 Support</h3>
+								<p>Our dedicated support team is available 24/7 to assist with any questions or concerns you may have.</p>
+							</div>
+						</div>
+
+						<div class="col-6 col-md-6">
+							<div class="feature">
+								<div class="icon">
+									<img src="images/return.svg" alt="Image" class="imf-fluid">
+								</div>
+								<h3>Hassle Free Returns</h3>
+								<p>Shop with confidence knowing that returns are easy and straightforward. </p>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+				<div class="col-lg-5">
+					<div class="img-wrap">
+						<img src="images/why-choose-us-img.jpg" alt="Image" class="img-fluid">
+					</div>
+				</div>
+
+			</div>
+		</div>
+	</div>
+	<!-- End Why Choose Us Section -->
+	<!-- Start We Help Section -->
+	<div class="popular-categories" style="height:180px;">
+		<div class="container">
+			<div class="row">
+				<!-- Start of Category Slider -->
+				<div id="categoryCarousel" class="carousel slide" data-ride="carousel">
+					<div class="carousel-inner">
+
+						<!-- First Slide with 5 Categories -->
+						<div class="carousel-item active">
+							<div class="row text-center">
+								<div class="col-2">
+									<div class="category-item">
+										<a asp-controller="Home" asp-action="Categories">
+											<img src="~/img/electronics/all.jpg" alt="Electronics" class="img-fluid rounded-circle" />
+										</a>
+										<h5>Electronics</h5>
+									</div>
+								</div>
+								<div class="col-2">
+									<div class="category-item">
+										<a asp-controller="Home" asp-action="Categories">
+										<img src="~/img/shoes/all.jpg" alt="Footwear" class="img-fluid rounded-circle">
+										
+										</a>
+										<h5>Footwear</h5>
+									</div>
+								</div>
+								<div class="col-2">
+									<div class="category-item">
+										<a asp-controller="Home" asp-action="Categories">
+								<img src="~/img/clothes/newall.jpg" alt="Clothes" class="img-fluid rounded-circle">
+										</a>
+										<h5>Clothes</h5>
+									</div>
+								</div>
+								<div class="col-2">
+									<div class="category-item">
+										<a asp-controller="Home" asp-action="Categories">
+										<img src="~/img/books/New.jpg"  alt="Books" class="img-fluid rounded-circle">
+										</a>
+										<h5>Books</h5>
+									</div>
+								</div>
+								<div class="col-2">
+									<div class="category-item">
+										<a asp-controller="Home" asp-action="Categories">
+										<img src="~/img/toys/New.jpg" alt="Toys" class="img-fluid rounded-circle">
+										</a>
+										<h5>Toys</h5>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- Second Slide with 5 Categories -->
+						<div class="carousel-item">
+							<div class="row text-center">
+								<div class="col-2">
+									<div class="category-item">
+										<a asp-controller="Home" asp-action="Categories">
+										<img src="~/img/Home and Kitchen/New.jpg" alt="Kitchen" class="img-fluid rounded-circle">
+										</a>
+										<h5>Kitchen</h5>
+									</div>
+								</div>
+								<div class="col-2">
+									<div class="category-item">
+										<a asp-controller="Home" asp-action="Categories">
+										<img src="~/img/furnitures/all.jpg"  alt="Furniture" class="img-fluid rounded-circle">
+										</a>
+										<h5>Furniture</h5>
+									</div>
+								</div>
+								<div class="col-2">
+									<div class="category-item">
+										<a asp-controller="Home" asp-action="Categories">
+										<img src="~/img/beauty/New.jpg" alt="Beauty" class="img-fluid rounded-circle">
+										</a>
+										<h5>Beauty</h5>
+									</div>
+								</div>
+								<div class="col-2">
+									<div class="category-item">
+										<a asp-controller="Home" asp-action="Categories">
+										<img src="~/img/office/New.jpg" alt="Office" class="img-fluid rounded-circle">
+										</a>
+										<h5>Office</h5>
+									</div>
+								</div>
+
+						
+								<div class="col-2">
+									<div class="category-item">
+										<a asp-controller="Home" asp-action="Categories">
+										<img src="~/img/jewellery/all.jpg" alt="Jewellery" class="img-fluid rounded-circle">
+										</a>
+										<h5>Jewellery</h5>
+									</div>
+								</div>
+
+							</div>
+						</div>
+
+					</div>
+
+					<!-- Carousel Controls -->
+					<a class="carousel-control-prev" href="#categoryCarousel" role="button" data-slide="prev">
+						<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+						<span class="sr-only">Previous</span>
+					</a>
+					<a class="carousel-control-next" href="#categoryCarousel" role="button" data-slide="next">
+						<span class="carousel-control-next-icon" aria-hidden="true"></span>
+						<span class="sr-only">Next</span>
+					</a>
+				</div>
+				<!-- End of Category Slider -->
+			</div>
+		</div>
+	</div>
+
+	<!-- End Popular Product -->
+	<!-- Start Testimonial Slider -->
+	<div class="testimonial-section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-7 mx-auto text-center">
+					<h2 class="section-title">Testimonials</h2>
+				</div>
+			</div>
+
+			<div class="row justify-content-center">
+				<div class="col-lg-12">
+					<div class="testimonial-slider-wrap text-center">
+
+						<div id="testimonial-nav">
+							<span class="prev" data-controls="prev"><span class="fa fa-chevron-left"></span></span>
+							<span class="next" data-controls="next"><span class="fa fa-chevron-right"></span></span>
+						</div>
+
+						<div class="testimonial-slider">
+
+							<div class="item">
+								<div class="row justify-content-center">
+									<div class="col-lg-8 mx-auto">
+										<div class="testimonial-block text-center">
+											<blockquote class="mb-5">
+												<p>&ldquo;The quality and craftsmanship of the products exceeded my expectations. The seamless shopping experience and exceptional customer service made my purchase truly enjoyable. I highly recommend this store to anyone looking for premium products.&rdquo;</p>
+
+											</blockquote>
+											<div class="author-info">
+												<div class="author-pic" style="display: flex; justify-content: center;">
+													<img src="images/person-1.png" alt="Maria Jones" class="img-fluid" style="border-radius: 50%;">
+												</div>
+												<h3 class="font-weight-bold">Pranav Arote</h3>
+
+												<span class="position d-block mb-3">Employee, Nexsus Techno Solution</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- END item -->
+							<div class="item">
+								<div class="row justify-content-center">
+									<div class="col-lg-8 mx-auto">
+										<div class="testimonial-block text-center">
+											<blockquote class="mb-5">
+												<p>&ldquo;The quality and craftsmanship of the products exceeded my expectations. The seamless shopping experience and exceptional customer service made my purchase truly enjoyable. I highly recommend this store to anyone looking for premium products.&rdquo;</p>
+
+											</blockquote>
+											<div class="author-info">
+												<div class="author-pic" style="display: flex; justify-content: center;">
+													<img src="images/IMG-20230802-WA0024.jpg" alt="Sumit Dhomse" class="img-fluid" style="border-radius: 50%;">
+												</div>
+												<h3 class="font-weight-bold">Sumit Dhomse</h3>
+												<span class="position d-block mb-3">Employee, Nexsus Techno Solution</span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+
+							<!-- END item -->
+
+							<div class="item">
+								<div class="row justify-content-center">
+									<div class="col-lg-8 mx-auto">
+
+										<div class="testimonial-block text-center">
+											<blockquote class="mb-5">
+												<p>&ldquo;The quality and craftsmanship of the products exceeded my expectations. The seamless shopping experience and exceptional customer service made my purchase truly enjoyable. I highly recommend this store to anyone looking for premium products.&rdquo;</p>
+											</blockquote>
+
+											
+										</div>
+
+									</div>
+								</div>
+							</div>
+							<!-- END item -->
+
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Testimonial Slider -->
+	<!-- Start Blog Section -->
+	<!-- Start Footer Section -->
+	<footer class="footer-section">
+		<div class="container relative">
+
+			<div class="sofa-img">
+				<img src="images/sofa.png" alt="Image" class="img-fluid">
+			</div>
+
+			<div class="row">
+				<div class="col-lg-8">
+					<div class="subscription-form">
+						<h3 class="d-flex align-items-center"><span class="me-1"><img src="images/envelope-outline.svg" alt="Image" class="img-fluid"></span><span>Subscribe to Newsletter</span></h3>
+
+						<form action="#" class="row g-3">
+							<div class="col-auto">
+								<input type="text" class="form-control" placeholder="Enter your name">
+							</div>
+							<div class="col-auto">
+								<input type="email" class="form-control" placeholder="Enter your email">
+							</div>
+							<div class="col-auto">
+								<button class="btn btn-primary">
+									<span class="fa fa-paper-plane"></span>
+								</button>
+							</div>
+						</form>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="row g-5 mb-5">
+				<div class="col-lg-4">
+					<div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">Nexsus<span>.</span></a></div>
+					<p class="mb-4">At Nexsus, we are committed to delivering top-quality products and a seamless shopping experience. Our curated collection spans across various categories, ensuring that you find exactly what you need. Shop with confidence and enjoy the convenience of our reliable service, tailored to meet your needs.</p>
+
+					<ul class="list-unstyled custom-social">
+						<li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+						<li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+						<li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+						<li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+					</ul>
+				</div>
+
+				<div class="col-lg-8">
+					<div class="row links-wrap">
+						<div class="col-6 col-sm-6 col-md-3">
+							<ul class="list-unstyled">
+								<li><a href="#">About us</a></li>
+								<li><a href="#">Services</a></li>
+								<li><a href="#">Blog</a></li>
+								<li><a href="#">Contact us</a></li>
+							</ul>
+						</div>
+
+						<div class="col-6 col-sm-6 col-md-3">
+							<ul class="list-unstyled">
+								<li><a href="#">Support</a></li>
+								<li><a href="#">Knowledge base</a></li>
+								<li><a href="#">Live chat</a></li>
+							</ul>
+						</div>
+
+						<div class="col-6 col-sm-6 col-md-3">
+							<ul class="list-unstyled">
+								<li><a href="#">Jobs</a></li>
+								<li><a href="#">Our team</a></li>
+								<li><a href="#">Leadership</a></li>
+								<li><a href="#">Privacy Policy</a></li>
+							</ul>
+						</div>
+
+						<div class="col-6 col-sm-6 col-md-3">
+							<ul class="list-unstyled">
+								<li><a href="#">Nordic Chair</a></li>
+								<li><a href="#">Kruzo Aero</a></li>
+								<li><a href="#">Ergonomic Chair</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="border-top copyright">
+				<div class="row pt-4">
+					<div class="col-lg-6">
+						<p class="mb-2 text-center text-lg-start">
+							Copyright &copy;<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. </p>
+					</div>
+
+					<div class="col-lg-6 text-center text-lg-end">
+						<ul class="list-unstyled d-inline-flex ms-auto">
+							<li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
+							<li><a href="#">Privacy Policy</a></li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</footer>
+	<!-- End Footer Section -->
+
+
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script src="js/tiny-slider.js"></script>
+	<script src="js/custom.js"></script>
+	<script>
+		$('#userDropdown').dropdown();
+		document.addEventListener('DOMContentLoaded', function () {
+			var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+			var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+				return new bootstrap.Dropdown(dropdownToggleEl)
+			})
+		});
+		$('.carousel').carousel({
+			interval: 3000 // Slides every 3 seconds
+		});
+
+	</script>
+</body>
+
+</html>

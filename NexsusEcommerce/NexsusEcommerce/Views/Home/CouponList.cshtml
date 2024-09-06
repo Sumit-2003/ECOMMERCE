@@ -1,0 +1,39 @@
+﻿
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Coupon List</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <div class="container">
+        <h1>Select a Coupon</h1>
+
+        @if (ViewBag.CouponCodes != null)
+        {
+            <select class="form-control" id="CouponDropdown">
+                <option value="">-- Select a Coupon --</option>
+                @foreach (var coupon in ViewBag.CouponCodes)
+                {
+                    <option value="@coupon.CouponCode">
+                        @coupon.CouponCode - @coupon.Description (@coupon.DiscountPercentage % off)
+                    </option>
+                }
+            </select>
+        }
+        else
+        {
+            <p>No coupons available.</p>
+        }
+    </div>
+    <script>
+        document.getElementById("CouponDropdown").addEventListener("change", function() {
+            var selectedCoupon = this.value;
+            // Handle the selected coupon code (e.g., apply discount or submit form)
+            console.log("Selected Coupon Code: " + selectedCoupon);
+        });
+    </script>
+
+</body>
+</html>
