@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="~/css/dashboard.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom CSS for the dashboard */
+        .container {
+            width: 90%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .avatar-initial {
+            font-size: 20px;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <!-- Order Statistics Card -->
+            <div class="col-md-6 col-lg-4 col-xl-4 mb-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-1 me-2">Order Statistics</h5>
+                            <p class="card-subtitle">@Model.TotalSales.ToString("C") Total Sales</p>
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn text-muted p-0" type="button" id="orderStatistics" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="bx bx-dots-vertical-rounded bx-lg"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="orderStatistics">
+                                <a class="dropdown-item" href="javascript:void(0);">Select All</a>
+                                <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+                                <a class="dropdown-item" href="javascript:void(0);">Share</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-6">
+                            <div class="d-flex flex-column align-items-center gap-1">
+                                <h3 class="mb-1">@Model.TotalOrders</h3>
+                                <small>Total Orders</small>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="orderStatisticsChart"></canvas>
+                            </div>
+                        </div>
+                                          </div>
+                </div>
+            </div>
+
+            <!-- User Count by City Card -->
+            <div class="col-md-6 col-lg-4 col-xl-4 mb-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-1 me-2">User Count by City</h5>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="userBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4 col-xl-4 mb-6">
+                <div class="card h-100">
+                    <div class="card-header d-flex justify-content-between">
+                        <div class="card-title mb-0">
+                            <h5 class="mb-1 me-2">User Count by City</h5>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="userBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data for the Order Statistics Pie Chart
+        const orderStatsData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.SalesByCategory));
+        const orderLabels = orderStatsData.map(item => item.Category);
+        const orderData = orderStatsData.map(item => item.TotalSales);
+
+        const orderCtx = document.getElementById('orderStatisticsChart').getContext('2d');
+        new Chart(orderCtx, {
+            type: 'pie',
+            data: {
+                labels: orderLabels,
+                datasets: [{
+                    label: 'Sales by Category',
+                    data: orderData,
+                    backgroundColor: [
+                        '#FF6384',
+                        '#36A2EB',
+                        '#FFCE56',
+                        '#4BC0C0',
+                        '#F7464A',
+                        '#8E5EA2',
+                        '#3B8BEB'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Data for the User Count by City Bar Chart
+        const userCountData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.UserCountByCity));
+        const cityLabels = userCountData.map(item => item.City);
+        const userData = userCountData.map(item => item.UserCount);
+
+        const userCtx = document.getElementById('userBarChart').getContext('2d');
+        new Chart(userCtx, {
+            type: 'bar',
+            data: {
+                labels: cityLabels,
+                datasets: [{
+                    label: 'User Count by City',
+                    data: userData,
+                    backgroundColor: '#42A5F5',
+                    borderColor: '#1E88E5',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return tooltipItem.label + ': ' + tooltipItem.raw;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    },
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

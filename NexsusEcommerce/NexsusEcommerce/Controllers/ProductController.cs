@@ -30,25 +30,71 @@ namespace NexsusEcommerce.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ProductId,ProductName,Description,Price,StockQuantity,CategoryId,ImageData")] Product product, IFormFile image)
         {
-            if (ModelState.IsValid)
+            try
             {
-                if (image != null && image.Length > 0)
+                // Validate Price
+                if (product.Price <= 1)
                 {
-                    using (var ms = new MemoryStream())
+                    ModelState.AddModelError("Price", "Price must be greater than 1.");
+                }
+
+                // Validate Stock Quantity
+                if (product.StockQuantity <= 1)
+                {
+                    ModelState.AddModelError("StockQuantity", "Stock quantity must be greater than 1.");
+                }
+
+                // Validate Image
+                if (image == null || image.Length == 0)
+                {
+                    ModelState.AddModelError("ImageData", "Product image is required.");
+                }
+                else
+                {
+                    // Validate image file size (optional, e.g., max 2MB)
+                    if (image.Length > 2 * 1024 * 1024) // 2MB
                     {
-                        await image.CopyToAsync(ms);
-                        product.ImageData = ms.ToArray();
+                        ModelState.AddModelError("ImageData", "Image size cannot exceed 2MB.");
+                    }
+
+                    // Validate image file type (optional)
+                    var supportedTypes = new[] { "image/jpeg", "image/png", "image/gif" };
+                    if (!supportedTypes.Contains(image.ContentType))
+                    {
+                        ModelState.AddModelError("ImageData", "Only JPEG, PNG, and GIF images are supported.");
                     }
                 }
 
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                // Check if ModelState is valid before proceeding
+                if (ModelState.IsValid)
+                {
+                    // Process and store the image if it is provided
+                    if (image != null && image.Length > 0)
+                    {
+                        using (var ms = new MemoryStream())
+                        {
+                            await image.CopyToAsync(ms);
+                            product.ImageData = ms.ToArray();
+                        }
+                    }
+
+                    // Save the product to the database
+                    _context.Add(product);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
             }
-            ViewBag.Categories = _context.Categories.ToList(); 
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+                ModelState.AddModelError(string.Empty, "An error occurred while creating the product. Please try again.");
+                // Optionally log the exception: _logger.LogError(ex, "Error creating product");
+            }
+
+            // If we reach here, something went wrong; redisplay the form with validation errors
+            ViewBag.Categories = _context.Categories.ToList();
             return View(product);
         }
-
 
         public async Task<IActionResult> Edit(int id)
         {
@@ -123,7 +169,20 @@ namespace NexsusEcommerce.Controllers
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
+		public IActionResult Search(string query)
+		{
+			// Fetch products from the database
+			var products = _context.Products.AsQueryable();
 
-       
-    }
+			if (!string.IsNullOrEmpty(query))
+			{
+				// Apply search filter
+				products = products.Where(p => p.ProductName.Contains(query) || p.Description.Contains(query));
+			}
+
+			// Pass the filtered list to the view
+			return View("Index", products.ToList());
+		}
+
+	}
 }

@@ -1,0 +1,85 @@
+﻿@model NexsusEcommerce.Models.ViewModels.EmailConfirmationViewModel
+
+@{
+    ViewData["Title"] = "Confirm Email";
+    var expirationTime = TempData["OtpExpirationTime"] != null
+        ? Convert.ToDateTime(TempData["OtpExpirationTime"])
+        : DateTime.UtcNow.AddMinutes(2); // Default 2 minutes from now
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Confirm Your Email</h2>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
+        <form asp-action="ConfirmEmail" method="post" class="bg-light p-4 border rounded shadow-sm">
+            <div class="mb-3">
+                <label asp-for="Otp" class="form-label">Enter OTP</label>
+                <input asp-for="Otp" class="form-control" />
+                <span asp-validation-for="Otp" class="text-danger"></span>
+            </div>
+
+            <div id="timer" class="mb-3 text-danger"></div>
+
+            <button type="submit" class="btn btn-primary">Confirm Email</button>
+        </form>
+
+        <!-- Resend OTP button -->
+        <form asp-action="ResendOtp" method="post" class="mt-3">
+            <button type="submit" class="btn btn-secondary">Resend OTP</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl3E3g3sciE07nD3ZJr6E/7r8V03GJ9E8K8nF8G52v" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-GLhlTQ8kI0zQ7Jw5xjzRYT3o9Qj5x92H7vj7Fz8aPtFvf9dNQXSy5lR0Y7ntx8x8J" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var expirationTimeString = '@expirationTime.ToString("yyyy-MM-ddTHH:mm:ssZ")';
+
+            if (expirationTimeString !== '') {
+                var expirationTime = new Date(expirationTimeString).getTime();
+                var timerElement = document.getElementById('timer');
+
+                function updateTimer() {
+                    var now = new Date().getTime();
+                    var distance = expirationTime - now;
+
+                    if (distance <= 0) {
+                        timerElement.innerHTML = "OTP has expired.";
+                        document.querySelector('button[type="submit"]').disabled = true;
+                    } else {
+                        var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                        timerElement.innerHTML = "Time left: " + minutes + "m " + seconds + "s ";
+                    }
+                }
+
+                updateTimer(); // Run once at load
+                setInterval(updateTimer, 1000); // Update every second
+            } else {
+                document.getElementById('timer').innerHTML = "No OTP expiration set.";
+            }
+        });
+    </script>
+</body>
+</html>

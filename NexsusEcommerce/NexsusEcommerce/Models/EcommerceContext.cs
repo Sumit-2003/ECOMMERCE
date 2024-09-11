@@ -272,12 +272,16 @@ public partial class EcommerceContext : DbContext
             entity.Property(e => e.LastName)
                 .HasMaxLength(255)
                 .IsUnicode(false);
+            entity.Property(e => e.Otp).HasMaxLength(6);
+            entity.Property(e => e.OtpExpiration).HasColumnType("datetime");
             entity.Property(e => e.Password)
                 .HasMaxLength(255)
                 .IsUnicode(false);
             entity.Property(e => e.PhoneNumber)
                 .HasMaxLength(50)
                 .IsUnicode(false);
+            entity.Property(e => e.ResetPasswordToken).HasMaxLength(100);
+            entity.Property(e => e.ResetPasswordTokenExpiration).HasColumnType("datetime");
             entity.Property(e => e.State)
                 .HasMaxLength(100)
                 .IsUnicode(false);

@@ -21,7 +21,7 @@
             grid-template-columns: repeat(3, 1fr); /* 3 products per row */
             gap: 20px;
             padding: 20px;
-            max-height: 90vh; /* Set the max height to trigger overflow */
+            max-height: 80vh; /* Set the max height to trigger overflow */
             overflow-y: scroll;
             scrollbar-width: none; /* Firefox */
             -ms-overflow-style: none; /* IE and Edge */
@@ -45,7 +45,7 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-            .Frame:hover {
+            .Frame over {
                 transform: translateY(-10px);
                 box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
             }
@@ -69,7 +69,7 @@
                 transition: transform 0.3s ease;
             }
 
-        .Frame:hover .image img {
+        .Frame over .image img {
             transform: scale(1.05);
         }
 
@@ -115,20 +115,20 @@
         }
 
             /* Hover effect */
-            .add-to-cart-button:hover {
+            .add-to-cart-button over {
                 background-color: #218838; /* Darker green on hover */
                 transform: scale(1.05); /* Slightly enlarge the button */
             }
 
             /* Add cart icon */
-            .add-to-cart-button::before {
+            .add-to-cart-button: efore {
                 content: "\f07a"; /* FontAwesome shopping cart icon */
                 font-family: "FontAwesome";
                 margin-right: 5px; /* Space between icon and text */
                 font-size: 18px; /* Icon size */
             }
 
-            /* Add animation when clicked */
+
             .add-to-cart-button:active {
                 transform: scale(0.95); /* Slightly shrink the button when clicked */
             }
@@ -166,21 +166,21 @@
                                 <div class="image">
                                     @if (product.ImageData != null)
                                     {
-                                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(product.ImageData)" alt="@product.ProductName" />
+                                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(product.ImageData)" alt="@product.ProductName"  />
                                     }
                                 </div>
                                 <div class="card-dis">
                                     <h5 class="card-title">@product.ProductName</h5>
                                     <p class="card-text">@product.Description</p>
                                     <p class="card-price">@product.Price.ToString("C")</p>
-                                    <button type="button" data-product-id="@product.ProductId" class="add-to-cart-button">
-                                        Add To Cart
-                                    </button>
-
-
 
 
                                 </div>
+
+                                <button type="button" data-product-id="@product.ProductId" class="add-to-cart-button">
+                                    Add To Cart
+                                </button>
+
                             </div>
                         </form>
                     </article>
@@ -191,10 +191,10 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            // Animation for Add to Cart
+
             $('.btn').click(function (e) {
                 e.preventDefault();
-                var cart = $('#cart-icon'); // Assuming you have an element with id "cart-icon"
+                var cart = $('#cart-icon');
                 var imgtodrag = $(this).closest('.Frame').find(".image img").eq(0);
                 if (imgtodrag) {
                     var imgclone = imgtodrag.clone()

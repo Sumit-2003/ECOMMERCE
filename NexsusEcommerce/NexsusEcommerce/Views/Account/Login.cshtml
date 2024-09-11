@@ -18,17 +18,17 @@
             background-size: cover;
             color: #333;
         }
-/
-      .container1 {
-            background: rgba(255, 255, 255, 0.9); 
+
+        .container1 {
+            background: rgba(255, 255, 255, 0.9);
             border-radius: 10px;
             padding: 2rem;
-            max-width: 500px; 
+            max-width: 500px;
             margin-top: 5rem;
         }
 
         h2 {
-            color: #333; 
+            color: #333;
         }
 
         .alert {
@@ -77,10 +77,9 @@
     </style>
 </head>
 <body>
-    <div class="container1 mt-5" style="width:60%;align-content:center;margin-left:20%;">
+    <div class="container1 mt-5">
         <h2 class="text-center mb-4">Login</h2>
 
-     
         @{
             var successMessage = ViewBag.SuccessMessage as string;
         }
@@ -93,34 +92,48 @@
             </div>
         }
 
-        <div class="row justify-content-center"style="align-items:center;">
+        <div class="row justify-content-center">
             <div class="col-12">
                 <form asp-action="Login" method="post" class="bg-light p-4 border rounded shadow-sm">
-                    
                     <div class="mb-3">
-                        <label asp-for="Username" class="form-label"placeholder="enter your name">Username</label>
-                        <input asp-for="Username" class="form-control" placeholder="enter your name" />
-                        <span asp-validation-for="Username" placeholder="enter your name" class="text-danger"></span>
-                        <div class="text-danger mt-2" asp-validation-for="Username"></div>
+                        <label asp-for="Username" class="form-label">Username</label>
+                        <input asp-for="Username" class="form-control" placeholder="Enter your username" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
                     </div>
 
                     <div class="mb-3">
                         <label asp-for="Password" class="form-label">Password</label>
-                        <input asp-for="Password" type="password" class="form-control" placeholder="enter your password" />
-                        <span asp-validation-for="Password" placeholder="enter your " class="text-danger"></span>
-                        <div class="text-danger mt-2" asp-validation-for="Password"></div>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="Enter your password" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+
+                    <!-- CAPTCHA -->
+                    <div class="mb-3">
+                        <label class="form-label">CAPTCHA</label>
+                        <div class="input-group">
+                            <input name="captchaInput" type="text" class="form-control" placeholder="Enter CAPTCHA code" required />
+                            <span class="input-group-text">
+                                <img src="@Url.Action("GenerateCaptcha", "Account")" alt="CAPTCHA" />
+                            </span>
+                        </div>
+                        @if (ViewBag.CaptchaError != null)
+                        {
+                            <span class="text-danger">@ViewBag.CaptchaError</span>
+                        }
                     </div>
 
                     <!-- Remember Me -->
-                    @* <div class="mb-3 form-check">
-                        <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
-                        <label asp-for="RememberMe" class="form-check-label">Remember me</label>
+                    @*  <div class="mb-3 form-check">
+                    <input asp-for="RememberMe" type="checkbox" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label">Remember me</label>
                     </div> *@
 
-                
                     <button type="submit" class="btn btn-primary w-100">Login</button>
 
                     <a asp-controller="Account" asp-action="Register" class="btn btn-secondary w-100 mt-3">Register</a>
+                    <div class="text-center mt-3">
+                        <a asp-controller="Account" asp-action="ForgotPassword">Forgot Password?</a>
+                    </div>
                 </form>
             </div>
         </div>

@@ -9,6 +9,9 @@
   <ItemGroup>
     <PackageReference Include="bootstrap" Version="5.3.3" />
     <PackageReference Include="BundleTransformer.SassAndScss" Version="1.14.2" />
+    <PackageReference Include="Captcha.Core" Version="1.0.1" />
+    <PackageReference Include="Captcha.Net" Version="1.2.1" />
+    <PackageReference Include="Chart.js" Version="3.7.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
@@ -22,6 +25,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.4" />
+    <PackageReference Include="NETCore.MailKit" Version="2.1.0" />
     <PackageReference Include="SharpScss" Version="2.0.0" />
     <PackageReference Include="X.PagedList" Version="10.0.3" />
     <PackageReference Include="X.PagedList.Mvc.Core" Version="10.1.2" />

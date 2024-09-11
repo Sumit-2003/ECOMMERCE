@@ -1,14 +1,14 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using NexsusEcommerce.Models;
+using Captcha.Core;
+using NETCore.MailKit.Core;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Add DbContext to the service container
 builder.Services.AddDbContext<EcommerceContext>(options =>
@@ -22,18 +22,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Account/AccessDenied"; // Redirect to access denied page
     });
 
-builder.Services.AddAuthorization(options =>
+// Register Captcha
+builder.Services.AddCaptcha(options =>
 {
-    // Define policies if needed
+    // Configure other CAPTCHA settings here if applicable
 });
 
 // Add session state services
-builder.Services.AddDistributedMemoryCache(); // Adds a default in-memory implementation of IDistributedCache
+builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
-    options.Cookie.HttpOnly = true; // Ensure the cookie is only accessible via HTTP
-    options.Cookie.IsEssential = true; // Make the session cookie essential
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
 var app = builder.Build();
@@ -50,10 +51,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication(); // Ensure this is before UseAuthorization
-app.UseAuthorization();  // Ensure this is after UseAuthentication
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.UseSession(); // Ensure session middleware is used before routing
+app.UseSession(); // Enable session middleware
 
 app.MapControllerRoute(
     name: "default",

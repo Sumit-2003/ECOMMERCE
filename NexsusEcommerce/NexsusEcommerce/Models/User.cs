@@ -33,6 +33,16 @@ public partial class User
 
     public DateTime? UpdatedAt { get; set; }
 
+    public string? Otp { get; set; }
+
+    public bool EmailConfirmed { get; set; }
+
+    public DateTime? OtpExpiration { get; set; }
+
+    public string? ResetPasswordToken { get; set; }
+
+    public DateTime? ResetPasswordTokenExpiration { get; set; }
+
     public virtual ICollection<Cart> Carts { get; set; } = new List<Cart>();
 
     public virtual ICollection<CouponVerification> CouponVerifications { get; set; } = new List<CouponVerification>();

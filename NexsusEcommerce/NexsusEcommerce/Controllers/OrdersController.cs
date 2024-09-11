@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
 using NexsusEcommerce.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 public class OrdersController : Controller
 {
@@ -11,7 +13,7 @@ public class OrdersController : Controller
         _context = context;
     }
 
-    public IActionResult OrderConfirmation()
+    public async Task<IActionResult> OrderConfirmation()
     {
         var userId = HttpContext.Session.GetInt32("UserId");
 
@@ -20,13 +22,13 @@ public class OrdersController : Controller
             return RedirectToAction("Login", "Account");
         }
 
-        var orders = _context.Orders
-            .Include(o => o.Product)  
+        var orders = await _context.Orders
+            .Include(o => o.Product)
             .Where(o => o.UserId == userId)
             .OrderByDescending(o => o.OrderDate)
-            .ToList();
+            .ToListAsync();
 
-        var user = _context.Users.Find(userId);
+        var user = await _context.Users.FindAsync(userId);
 
         if (user == null)
         {
@@ -38,7 +40,19 @@ public class OrdersController : Controller
         ViewData["Email"] = user.Email;
         ViewData["Orders"] = orders;
 
+        // Prepare sales data for chart
+        var salesData = orders
+            .GroupBy(o => o.OrderDate.Value.Date)
+            .Select(g => new
+            {
+                Date = g.Key,
+                TotalSales = g.Sum(o => o.TotalPrice)
+            })
+            .OrderBy(g => g.Date)
+            .ToList();
+
+        ViewData["SalesData"] = salesData;
+
         return View();
     }
-
 }
