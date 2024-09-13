@@ -1,19 +1,24 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using NexsusEcommerce.Models;
+using System.Text;
 using static Azure.Core.HttpHeader;
 
 public class CartController : Controller
 {
+    
     private readonly EcommerceContext _context;
+    private readonly IEmailService _emailService;
 
-
-    public CartController(EcommerceContext context)
+    // Single constructor accepting both dependencies
+    public CartController(EcommerceContext context, IEmailService emailService)
     {
         _context = context;
-
+        _emailService = emailService;
     }
+
     public IActionResult AddCartToDb()
     {
         return View();
@@ -218,84 +223,124 @@ public class CartController : Controller
     }
 
 
-    [HttpPost]
-    public IActionResult Checkout(string couponCode)
+// Ensure you have this using directive
+
+[HttpPost]
+public IActionResult Checkout(string couponCode)
+{
+    var userId = HttpContext.Session.GetInt32("UserId");
+
+    if (userId == null)
     {
-        var userId = HttpContext.Session.GetInt32("UserId");
+        return RedirectToAction("Login", "Account");
+    }
 
-        if (userId == null)
+    var coupon = _context.Coupons.FirstOrDefault(c => c.CouponCode == couponCode && c.EndDate >= DateTime.Now);
+
+    var cart = _context.Carts
+        .Include(c => c.CartItems)
+        .ThenInclude(ci => ci.Product)
+        .FirstOrDefault(c => c.UserId == userId);
+
+    if (cart == null || cart.CartItems.Count == 0)
+    {
+        TempData["Message"] = "Your cart is empty or not found.";
+        return RedirectToAction("Index", "Home");
+    }
+
+    decimal totalPrice = cart.CartItems.Sum(ci => ci.Quantity * ci.Product.Price);
+
+    if (coupon != null)
+    {
+        var couponVerification = new CouponVerification
         {
-            return RedirectToAction("Login", "Account");
-        }
-
-        var coupon = _context.Coupons.FirstOrDefault(c => c.CouponCode == couponCode && c.EndDate >= DateTime.Now);
-
-        var cart = _context.Carts
-            .Include(c => c.CartItems)
-            .ThenInclude(ci => ci.Product)
-            .FirstOrDefault(c => c.UserId == userId);
-
-        if (cart == null || cart.CartItems.Count == 0)
-        {
-            TempData["Message"] = "Your cart is empty or not found.";
-            return RedirectToAction("Index", "Home");
-        }
-
-        decimal totalPrice = cart.CartItems.Sum(ci => ci.Quantity * ci.Product.Price);
-
-        if (coupon != null)
-        {
-            var couponVerification = new CouponVerification
-            {
-                UserId = (int)userId,
-                CouponId = coupon.CouponId,
-                CouponCode = coupon.CouponCode,
-                VerificationDate = DateTime.Now,
-                IsCouponUsed = true
-            };
-
-            _context.CouponVerifications.Add(couponVerification);
-
-            var discount = coupon.DiscountPercentage / 100;
-            totalPrice -= totalPrice * discount;
-        }
-
-        foreach (var item in cart.CartItems)
-        {
-            var order = new Order
-            {
-                UserId = (int)userId,
-                ProductId = (int)item.ProductId,
-                ProductName = item.Product.ProductName,
-                Quantity = item.Quantity,
-                TotalPrice = item.Quantity * item.Product.Price,
-                OrderDate = DateTime.Now
-            };
-
-            _context.Orders.Add(order);
-        }
-
-        _context.CartItems.RemoveRange(cart.CartItems);
-        _context.SaveChanges();
-
-
-        var user = _context.Users.Find(userId);
-        var confirmationViewModel = new OrderConfirmationViewModel
-        {
-            UserName = user.Username,
-            Address = user.Address,
-            Email = user.Email,
-            TotalPrice = totalPrice,
-            CartItems = cart.CartItems.Select(ci => new CartItemViewModel
-            {
-                ProductName = ci.Product.ProductName,
-                Quantity = ci.Quantity,
-                Price = ci.Product.Price,
-                Total = ci.Quantity * ci.Product.Price
-            }).ToList()
+            UserId = (int)userId,
+            CouponId = coupon.CouponId,
+            CouponCode = coupon.CouponCode,
+            VerificationDate = DateTime.Now,
+            IsCouponUsed = true
         };
 
-        return View("OrderConfirmation", confirmationViewModel);
+        _context.CouponVerifications.Add(couponVerification);
+
+        var discount = coupon.DiscountPercentage / 100;
+        totalPrice -= totalPrice * discount;
+    }
+
+    foreach (var item in cart.CartItems)
+    {
+        var order = new Order
+        {
+            UserId = (int)userId,
+            ProductId = (int)item.ProductId,
+            ProductName = item.Product.ProductName,
+            Quantity = item.Quantity,
+            TotalPrice = item.Quantity * item.Product.Price,
+            OrderDate = DateTime.Now
+        };
+
+        _context.Orders.Add(order);
+    }
+
+    _context.CartItems.RemoveRange(cart.CartItems);
+    _context.SaveChanges();
+
+    var user = _context.Users.Find(userId);
+    var confirmationViewModel = new OrderConfirmationViewModel
+    {
+        UserName = user.Username,
+        Address = user.Address,
+        Email = user.Email,
+        TotalPrice = totalPrice,
+        CartItems = cart.CartItems.Select(ci => new CartItemViewModel
+        {
+            ProductName = ci.Product.ProductName,
+            Quantity = ci.Quantity,
+            Price = ci.Product.Price,
+            Total = ci.Quantity * ci.Product.Price
+        }).ToList()
+    };
+
+    // Serialize the view model to JSON and store it in TempData
+    TempData["OrderConfirmation"] = JsonConvert.SerializeObject(confirmationViewModel);
+
+    // Send confirmation email
+    var emailBody = GenerateOrderConfirmationEmailBody(confirmationViewModel);
+    _emailService.SendEmailAsync(user.Email, "Order Confirmation", emailBody);
+
+    return RedirectToAction("OrderBill");
+}
+
+    public IActionResult OrderBill()
+    {
+        if (TempData["OrderConfirmation"] is string orderConfirmationJson)
+        {
+            var confirmationViewModel = JsonConvert.DeserializeObject<OrderConfirmationViewModel>(orderConfirmationJson);
+            return View(confirmationViewModel);
+        }
+
+        TempData["Message"] = "Order details not found.";
+        return RedirectToAction("Index", "Home");
+    }
+
+    private string GenerateOrderConfirmationEmailBody(OrderConfirmationViewModel viewModel)
+    {
+        // Construct the email body here
+        var sb = new StringBuilder();
+        sb.AppendLine($"Hello {viewModel.UserName},");
+        sb.AppendLine("Thank you for your order. Here are the details:");
+        sb.AppendLine($"Total Price: {viewModel.TotalPrice:C}");
+        sb.AppendLine("Items:");
+
+        foreach (var item in viewModel.CartItems)
+        {
+            sb.AppendLine($"{item.ProductName} - {item.Quantity} x {item.Price:C} = {item.Total:C}");
+        }
+
+        sb.AppendLine("We will notify you once your order is shipped.");
+        sb.AppendLine("Thank you for shopping with us!");
+
+        return sb.ToString();
     }
 
 

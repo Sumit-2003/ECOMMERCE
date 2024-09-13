@@ -1,0 +1,80 @@
+﻿@model List<dynamic>
+
+<div class="chart-container">
+    <canvas id="salesHistogramChart"></canvas>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const salesData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+
+            if (!salesData || !salesData.length) {
+                document.getElementById('salesHistogramChart').innerHTML = '<p>No data available to display.</p>';
+                return;
+            }
+
+            const labels = salesData.map(data => new Date(data.Date).toLocaleDateString());
+            const data = salesData.map(data => data.TotalSales);
+
+            const ctx = document.getElementById('salesHistogramChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Sales',
+                        data: data,
+                        backgroundColor: '#42A5F5',
+                        borderColor: '#1E88E5',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Date'
+                            },
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 45,
+                                minRotation: 30
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Total Sales'
+                            },
+                            ticks: {
+                                callback: function (value) {
+                                    return value.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+}

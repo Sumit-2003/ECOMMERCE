@@ -12,11 +12,14 @@ using System.Linq;
 using System;
 using Captcha.Net;
 using NETCore.MailKit.Core;
+using System.Net.Mail;
 
 // If ICaptchaValidator is not available, use a fallback implementation
 public interface IEmailService
 {
-    Task SendEmailAsync(string to, string subject, string body);
+    Task SendEmailAsync(string to, string subject, string body, byte[] pdfBytes, string v);
+    void SendEmailAsync(MailMessage emailMessage);
+    Task SendEmailAsync(string email, string subject, string body);
 }
 
 public interface ICaptchaValidator

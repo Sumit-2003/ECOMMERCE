@@ -39,4 +39,14 @@ public class EmailService : IEmailService
             throw new InvalidOperationException("Failed to send email.", ex);
         }
     }
+
+    public Task SendEmailAsync(string to, string subject, string body, byte[] pdfBytes, string v)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SendEmailAsync(MailMessage emailMessage)
+    {
+        throw new NotImplementedException();
+    }
 }
