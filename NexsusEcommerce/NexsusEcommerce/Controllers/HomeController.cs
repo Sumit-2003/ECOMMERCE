@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using NexsusEcommerce.Models;
 
 public class HomeController : Controller
@@ -9,6 +12,7 @@ public class HomeController : Controller
     {
         _context = context;
     }
+    
 
     public IActionResult Index()
     {

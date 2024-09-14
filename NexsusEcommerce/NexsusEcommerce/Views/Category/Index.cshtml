@@ -159,14 +159,15 @@
                             <td class="py-4 px-6 text-gray-900">@category.CategoryName</td>
                             <td class="py-4 px-6 text-gray-700">@category.Description</td>
                             <td class="py-4 px-6">
-                            
+
                                 <a href="@Url.Action("Edit", "Category", new { id = category.CategoryId })" class="btn btn-custom btn-edit mr-2">
-                                    Edit
+                                    <i class="fas fa-edit"></i> Edit
                                 </a>
-                              
+
                                 <a href="@Url.Action("Delete", "Category", new { id = category.CategoryId })" class="btn btn-custom btn-delete">
-                                    Delete
+                                    <i class="fas fa-trash"></i> Delete
                                 </a>
+
                             </td>
                         </tr>
                     }

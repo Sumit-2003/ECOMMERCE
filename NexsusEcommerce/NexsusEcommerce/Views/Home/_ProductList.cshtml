@@ -145,6 +145,63 @@
         }
 
         }
+        /* Add overlay and plus sign on hover */
+        .image {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+            .image img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
+                border-radius: 15px;
+                transition: transform 0.3s ease;
+            }
+
+        /* The overlay and "+" sign effect */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 15px;
+        }
+
+        .plus-sign {
+            font-size: 48px;
+            color: white;
+            font-weight: bold;
+            opacity: 0;
+        }
+
+        .image:hover .overlay {
+            opacity: 1;
+        }
+
+        .image:hover img {
+            transform: scale(1.1); /* Zoom effect */
+        }
+
+        .image:hover .plus-sign {
+            opacity: 1;
+        }
+
     </style>
 </head>
 <body>
@@ -164,11 +221,17 @@
                         <form asp-controller="Cart" asp-action="AddCartToDb" method="post">
                             <div class="cart">
                                 <div class="image">
-                                    @if (product.ImageData != null)
-                                    {
-                                        <img src="data:image/jpeg;base64,@Convert.ToBase64String(product.ImageData)" alt="@product.ProductName"  />
-                                    }
+                                    <a href="@Url.Action("Index", "Review", new { id = product.ProductId })">
+                                        @if (product.ImageData != null)
+                                        {
+                                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(product.ImageData)" alt="@product.ProductName" />
+                                        }
+                                        <div class="overlay">
+                                            <span class="plus-sign">+</span>
+                                        </div>
+                                    </a>
                                 </div>
+
                                 <div class="card-dis">
                                     <h5 class="card-title">@product.ProductName</h5>
                                     <p class="card-text">@product.Description</p>

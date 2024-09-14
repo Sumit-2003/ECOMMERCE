@@ -290,9 +290,13 @@ public class AccountController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Logout()
     {
-        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        HttpContext.Session.Clear();
-        TempData.Clear();
+        if (User.Identity.IsAuthenticated) // Check if the user is logged in
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
+            TempData.Clear();
+        }
+
         return RedirectToAction("Login", "Account");
     }
 
