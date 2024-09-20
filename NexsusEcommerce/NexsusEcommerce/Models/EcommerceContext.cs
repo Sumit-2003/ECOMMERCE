@@ -31,10 +31,11 @@ public partial class EcommerceContext : DbContext
 
     public virtual DbSet<Product> Products { get; set; }
 
+    public virtual DbSet<ReturnOrder> ReturnOrders { get; set; }
+
     public virtual DbSet<Review> Reviews { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
-    public IEnumerable<object> Sales { get; internal set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -177,12 +178,19 @@ public partial class EcommerceContext : DbContext
         {
             entity.HasKey(e => e.OrderId).HasName("PK__Orders__C3905BCF2A3856FF");
 
-            entity.ToTable(tb => tb.HasTrigger("trg_UpdateProductStock"));
+            entity.ToTable(tb =>
+                {
+                    tb.HasTrigger("trg_UpdateProductStock");
+                    tb.HasTrigger("trg_UpdateProductStockafterStatus");
+                });
 
             entity.Property(e => e.OrderDate)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.ProductName).HasMaxLength(255);
+            entity.Property(e => e.Status)
+                .HasMaxLength(50)
+                .HasDefaultValue("Pending");
             entity.Property(e => e.TotalPrice).HasColumnType("decimal(18, 2)");
 
             entity.HasOne(d => d.Product).WithMany(p => p.Orders)
@@ -218,6 +226,39 @@ public partial class EcommerceContext : DbContext
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Products__Catego__6E01572D");
+        });
+
+        modelBuilder.Entity<ReturnOrder>(entity =>
+        {
+            entity.HasKey(e => e.ReturnOrderId).HasName("PK__ReturnOr__4DBF55438A601781");
+
+            entity.ToTable("ReturnOrder", tb => tb.HasTrigger("trg_UpdateOrderStatus"));
+
+            entity.Property(e => e.Action).HasMaxLength(50);
+            entity.Property(e => e.Comfirmation)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasDefaultValue("Pending");
+            entity.Property(e => e.CreatedAt)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.ProductName).HasMaxLength(255);
+            entity.Property(e => e.Reason).HasMaxLength(500);
+
+            entity.HasOne(d => d.Order).WithMany(p => p.ReturnOrders)
+                .HasForeignKey(d => d.OrderId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ReturnOrder_Order");
+
+            entity.HasOne(d => d.Product).WithMany(p => p.ReturnOrders)
+                .HasForeignKey(d => d.ProductId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ReturnOrder_Product");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ReturnOrders)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ReturnOrder_User");
         });
 
         modelBuilder.Entity<Review>(entity =>

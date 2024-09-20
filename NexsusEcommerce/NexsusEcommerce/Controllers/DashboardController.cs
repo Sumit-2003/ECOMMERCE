@@ -57,7 +57,7 @@ public class DashboardController : Controller
                 TotalSales = totalSales,
                 TotalOrders = totalOrders,
                 SalesByCategory = salesByCategory,
-                UserCountByCity = userCountByCity // Set the new property
+                UserCountByCity = userCountByCity 
             };
 
             return View(dashboardModel);
@@ -79,7 +79,8 @@ public class DashboardController : Controller
         {
             if (!startDate.HasValue || !endDate.HasValue)
             {
-                startDate = DateTime.Today.AddDays(-7); // Default to past 7 days if no date range is provided
+                // Default to past 7 days if no date range is provided
+                startDate = DateTime.Today.AddDays(-7); 
                 endDate = DateTime.Today;
             }
 
@@ -131,7 +132,6 @@ public class DashboardController : Controller
         catch (Exception ex)
         {
       
-            // Return an error view or handle the exception as needed
             return View("Error", new ErrorViewModel { RequestId = HttpContext.TraceIdentifier, Message = ex.Message });
         }
     }

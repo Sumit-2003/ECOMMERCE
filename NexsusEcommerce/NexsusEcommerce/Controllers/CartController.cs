@@ -5,10 +5,18 @@ using Newtonsoft.Json;
 using NexsusEcommerce.Models;
 using System.Text;
 using static Azure.Core.HttpHeader;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using System.IO;
+
+using iText.Layout.Properties;
+using iText.Kernel.Colors;
+using iText.Layout.Borders;
 
 public class CartController : Controller
 {
-    
+
     private readonly EcommerceContext _context;
     private readonly IEmailService _emailService;
 
@@ -159,14 +167,12 @@ public class CartController : Controller
     [HttpPost]
     public async Task<IActionResult> ApplyCoupon(string couponCode)
     {
-
         int? userId = HttpContext.Session.GetInt32("UserId");
 
         if (userId == null)
         {
             return RedirectToAction("Login", "Account");
         }
-
 
         var cart = await _context.Carts
             .Include(c => c.CartItems)
@@ -187,7 +193,6 @@ public class CartController : Controller
             return RedirectToAction("Index");
         }
 
-
         var couponVerification = await _context.CouponVerifications
             .FirstOrDefaultAsync(cv => cv.UserId == userId.Value && cv.CouponCode == couponCode);
 
@@ -197,14 +202,14 @@ public class CartController : Controller
             return RedirectToAction("Index");
         }
 
-
         var discount = coupon.DiscountPercentage / 100;
 
         var totalPrice = cart.CartItems.Sum(ci => ci.Quantity * ci.Product.Price);
         var discountedPrice = totalPrice - (totalPrice * discount);
 
-
+        // Store the discount in TempData
         TempData["DiscountedTotal"] = discountedPrice.ToString("F2");
+        TempData["DiscountPercentage"] = coupon.DiscountPercentage.ToString("F0");
 
         var newCouponVerification = new CouponVerification
         {
@@ -223,125 +228,252 @@ public class CartController : Controller
     }
 
 
-// Ensure you have this using directive
+    // Ensure you have this using directive
 
-[HttpPost]
-public IActionResult Checkout(string couponCode)
-{
-    var userId = HttpContext.Session.GetInt32("UserId");
-
-    if (userId == null)
+    public async Task<IActionResult> Checkout(string couponCode)
     {
-        return RedirectToAction("Login", "Account");
-    }
+        var userId = HttpContext.Session.GetInt32("UserId");
 
-    var coupon = _context.Coupons.FirstOrDefault(c => c.CouponCode == couponCode && c.EndDate >= DateTime.Now);
-
-    var cart = _context.Carts
-        .Include(c => c.CartItems)
-        .ThenInclude(ci => ci.Product)
-        .FirstOrDefault(c => c.UserId == userId);
-
-    if (cart == null || cart.CartItems.Count == 0)
-    {
-        TempData["Message"] = "Your cart is empty or not found.";
-        return RedirectToAction("Index", "Home");
-    }
-
-    decimal totalPrice = cart.CartItems.Sum(ci => ci.Quantity * ci.Product.Price);
-
-    if (coupon != null)
-    {
-        var couponVerification = new CouponVerification
+        if (userId == null)
         {
-            UserId = (int)userId,
-            CouponId = coupon.CouponId,
-            CouponCode = coupon.CouponCode,
-            VerificationDate = DateTime.Now,
-            IsCouponUsed = true
-        };
-
-        _context.CouponVerifications.Add(couponVerification);
-
-        var discount = coupon.DiscountPercentage / 100;
-        totalPrice -= totalPrice * discount;
-    }
-
-    foreach (var item in cart.CartItems)
-    {
-        var order = new Order
-        {
-            UserId = (int)userId,
-            ProductId = (int)item.ProductId,
-            ProductName = item.Product.ProductName,
-            Quantity = item.Quantity,
-            TotalPrice = item.Quantity * item.Product.Price,
-            OrderDate = DateTime.Now
-        };
-
-        _context.Orders.Add(order);
-    }
-
-    _context.CartItems.RemoveRange(cart.CartItems);
-    _context.SaveChanges();
-
-    var user = _context.Users.Find(userId);
-    var confirmationViewModel = new OrderConfirmationViewModel
-    {
-        UserName = user.Username,
-        Address = user.Address,
-        Email = user.Email,
-        TotalPrice = totalPrice,
-        CartItems = cart.CartItems.Select(ci => new CartItemViewModel
-        {
-            ProductName = ci.Product.ProductName,
-            Quantity = ci.Quantity,
-            Price = ci.Product.Price,
-            Total = ci.Quantity * ci.Product.Price
-        }).ToList()
-    };
-
-    // Serialize the view model to JSON and store it in TempData
-    TempData["OrderConfirmation"] = JsonConvert.SerializeObject(confirmationViewModel);
-
-    // Send confirmation email
-    var emailBody = GenerateOrderConfirmationEmailBody(confirmationViewModel);
-    _emailService.SendEmailAsync(user.Email, "Order Confirmation", emailBody);
-
-    return RedirectToAction("OrderBill");
-}
-
-    public IActionResult OrderBill()
-    {
-        if (TempData["OrderConfirmation"] is string orderConfirmationJson)
-        {
-            var confirmationViewModel = JsonConvert.DeserializeObject<OrderConfirmationViewModel>(orderConfirmationJson);
-            return View(confirmationViewModel);
+            return RedirectToAction("Login", "Account");
         }
 
-        TempData["Message"] = "Order details not found.";
-        return RedirectToAction("Index", "Home");
-    }
+        var cart = _context.Carts
+            .Include(c => c.CartItems)
+            .ThenInclude(ci => ci.Product)
+            .FirstOrDefault(c => c.UserId == userId);
 
-    private string GenerateOrderConfirmationEmailBody(OrderConfirmationViewModel viewModel)
-    {
-        // Construct the email body here
-        var sb = new StringBuilder();
-        sb.AppendLine($"Hello {viewModel.UserName},");
-        sb.AppendLine("Thank you for your order. Here are the details:");
-        sb.AppendLine($"Total Price: {viewModel.TotalPrice:C}");
-        sb.AppendLine("Items:");
-
-        foreach (var item in viewModel.CartItems)
+        if (cart == null || cart.CartItems.Count == 0)
         {
-            sb.AppendLine($"{item.ProductName} - {item.Quantity} x {item.Price:C} = {item.Total:C}");
+            TempData["Message"] = "Your cart is empty or not found.";
+            return RedirectToAction("Index", "Home");
         }
 
-        sb.AppendLine("We will notify you once your order is shipped.");
-        sb.AppendLine("Thank you for shopping with us!");
+        decimal totalPrice = cart.CartItems.Sum(ci => ci.Quantity * ci.Product.Price);
 
-        return sb.ToString();
+        // Retrieve the discounted price and percentage from TempData
+        var discountedTotal = TempData["DiscountedTotal"] as string;
+        var discountPercentage = TempData["DiscountPercentage"] as string;
+
+        if (discountedTotal != null)
+        {
+            totalPrice = decimal.Parse(discountedTotal);
+        }
+        else
+        {
+            // If no discount is applied, clear TempData values
+            TempData.Remove("DiscountedTotal");
+            TempData.Remove("DiscountPercentage");
+        }
+
+        var orders = new List<Order>();
+
+        foreach (var item in cart.CartItems)
+        {
+            var order = new Order
+            {
+                UserId = (int)userId,
+                ProductId = (int)item.ProductId,
+                ProductName = item.Product.ProductName,
+                Quantity = item.Quantity,
+                TotalPrice = item.Quantity * item.Product.Price,
+                OrderDate = DateTime.Now
+            };
+
+            orders.Add(order);
+            _context.Orders.Add(order);
+        }
+
+        _context.CartItems.RemoveRange(cart.CartItems);
+        await _context.SaveChangesAsync();
+
+        // Generate PDF Invoice
+        var pdfBytes = GeneratePdfInvoice(userId.Value, orders, discountPercentage != null ? decimal.Parse(discountPercentage) : (decimal?)null, totalPrice);
+
+        // Get user email
+        var user = await _context.Users.FindAsync(userId.Value);
+        var userEmail = user?.Email;
+
+        if (!string.IsNullOrEmpty(userEmail))
+        {
+            // Send PDF Invoice via email
+            await _emailService.SendEmailAsync(userEmail, "Your Invoice", "Please find your invoice attached.", pdfBytes, "invoice.pdf");
+        }
+
+        // Store the order ID in TempData to retrieve it later
+        TempData["OrderId"] = orders.First().OrderId;
+        TempData["UserId"] = userId.Value;
+
+        return RedirectToAction("OrderConfirmation");
     }
+    public IActionResult OrderConfirmation()
+    {
+        // You might need to set TempData here, or it could be set in the previous action
+        return View();
+    }
+
+    public byte[] GeneratePdfInvoice(int userId, List<Order> orders, decimal? finalDiscount, decimal totalPrice)
+    {
+        using (var memoryStream = new MemoryStream())
+        {
+            var writer = new PdfWriter(memoryStream);
+            var pdf = new PdfDocument(writer);
+            var document = new Document(pdf);
+
+            // Set font and margin
+            var fontSize = 12f;
+
+            // Title
+            document.Add(new Paragraph("INVOICE")
+                .SetFontSize(20)
+                .SetBold()
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetMarginBottom(20));
+
+            // Company Details
+            document.Add(new Paragraph("NexsusEcommerce")
+                .SetFontSize(16)
+                .SetBold());
+
+            document.Add(new Paragraph("Phone: +1 3649-6589")
+                .SetFontSize(fontSize));
+
+            document.Add(new Paragraph("Email: company@gmail.com")
+                .SetFontSize(fontSize));
+
+            document.Add(new Paragraph("Address: USA")
+                .SetFontSize(fontSize));
+
+            document.Add(new Paragraph("\n"));
+
+            // User Details
+            var user = _context.Users.Find(userId);
+            if (user != null)
+            {
+                document.Add(new Paragraph("Customer Details:")
+                    .SetFontSize(14)
+                    .SetBold());
+
+                document.Add(new Paragraph($"Name: {user.Username}")
+                    .SetFontSize(fontSize));
+
+                document.Add(new Paragraph($"Email: {user.Email}")
+                    .SetFontSize(fontSize));
+
+                document.Add(new Paragraph($"Phone: {user.PhoneNumber}")
+                    .SetFontSize(fontSize));
+
+                document.Add(new Paragraph($"Address: {user.Address}")
+                    .SetFontSize(fontSize));
+            }
+
+            document.Add(new Paragraph("\n"));
+
+            // Invoice Details
+            document.Add(new Paragraph($"Invoice #: {DateTime.Now.ToString("yyyyMMddHHmmss")}")
+                .SetFontSize(14)
+                .SetBold()
+                .SetTextAlignment(TextAlignment.RIGHT));
+
+            document.Add(new Paragraph("\n"));
+
+            // Table for Order Details
+            Table table = new Table(UnitValue.CreatePercentArray(new float[] { 4, 2, 2 }))
+                .SetWidth(UnitValue.CreatePercentValue(100))
+                .SetBorder(new SolidBorder(1))
+                .SetMarginBottom(20);
+
+            // Adding table headers with styling
+            table.AddHeaderCell(new Cell()
+                .Add(new Paragraph("Description").SetFontSize(fontSize))
+                .SetBold()
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                .SetBackgroundColor(new DeviceRgb(65, 65, 65)) // Dark gray background
+                .SetFontColor(DeviceRgb.WHITE) // White text
+                .SetBorder(new SolidBorder(1))); // Border around header cells
+
+            table.AddHeaderCell(new Cell()
+                .Add(new Paragraph("Quantity").SetFontSize(fontSize))
+                .SetBold()
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                .SetBackgroundColor(new DeviceRgb(65, 65, 65)) // Dark gray background
+                .SetFontColor(DeviceRgb.WHITE) // White text
+                .SetBorder(new SolidBorder(1))); // Border around header cells
+
+            table.AddHeaderCell(new Cell()
+                .Add(new Paragraph("Price").SetFontSize(fontSize))
+                .SetBold()
+                .SetTextAlignment(TextAlignment.CENTER)
+                .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                .SetBackgroundColor(new DeviceRgb(65, 65, 65)) // Dark gray background
+                .SetFontColor(DeviceRgb.WHITE) // White text
+                .SetBorder(new SolidBorder(1))); // Border around header cells
+
+            // Adding table rows
+            foreach (var order in orders)
+            {
+                table.AddCell(new Cell()
+                    .Add(new Paragraph(order.ProductName))
+                    .SetPadding(10)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .SetBorder(new SolidBorder(1))); // Border around cells
+
+                table.AddCell(new Cell()
+                    .Add(new Paragraph(order.Quantity.ToString()))
+                    .SetPadding(10)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .SetBorder(new SolidBorder(1))); // Border around cells
+
+                table.AddCell(new Cell()
+                    .Add(new Paragraph($"₹{order.TotalPrice:F2}"))
+                    .SetPadding(10)
+                    .SetTextAlignment(TextAlignment.CENTER)
+                    .SetVerticalAlignment(VerticalAlignment.MIDDLE)
+                    .SetBorder(new SolidBorder(1))); // Border around cells
+            }
+
+            document.Add(table);
+
+            // Summary
+            document.Add(new Paragraph("\n"));
+
+            decimal discountAmount = finalDiscount.HasValue ? (totalPrice * finalDiscount.Value / 100) : 0;
+            decimal discountedPrice = totalPrice - discountAmount;
+
+            document.Add(new Paragraph($"Total Amount: ₹{totalPrice:F2}")
+                .SetFontSize(fontSize)
+                .SetBold());
+
+            if (discountAmount > 0)
+            {
+                document.Add(new Paragraph($"Discount ({finalDiscount:F0}%): ₹{discountAmount:F2}")
+                    .SetFontSize(fontSize)
+                    .SetBold());
+
+                document.Add(new Paragraph($"Total Payable: ₹{discountedPrice:F2}")
+                    .SetFontSize(fontSize)
+                    .SetBold());
+            }
+
+            document.Add(new Paragraph("\n"));
+
+            // Footer
+            document.Add(new Paragraph($"Date: {DateTime.Now.ToShortDateString()}")
+                .SetFontSize(fontSize));
+
+            document.Add(new Paragraph("Thank you for shopping with us!")
+                .SetFontSize(fontSize));
+
+            document.Close();
+            return memoryStream.ToArray();
+        }
+    }
+
 
 
     [HttpGet]
@@ -367,7 +499,33 @@ public IActionResult Checkout(string couponCode)
 
         return Ok();
     }
+    [HttpGet]
+    public async Task<IActionResult> GetInvoice(int userId, int orderId)
+    {
+        // Retrieve the order details for generating the invoice
+        var orders = await _context.Orders
+            .Where(o => o.UserId == userId && o.OrderId == orderId)
+            .ToListAsync();
 
+        if (orders == null || !orders.Any())
+        {
+            return NotFound();
+        }
 
+        decimal totalPrice = orders.Sum(o => o.TotalPrice);
+
+        // Extract CouponCode from TempData
+        var couponCode = TempData["CouponCode"]?.ToString();
+
+        // Retrieve discount percentage using the extracted couponCode
+        var discountPercentage = await _context.Coupons
+            .Where(c => c.CouponCode == couponCode && c.StartDate <= DateTime.UtcNow && c.EndDate >= DateTime.UtcNow)
+            .Select(c => c.DiscountPercentage)
+            .FirstOrDefaultAsync();
+
+        var pdfBytes = GeneratePdfInvoice(userId, orders, discountPercentage != null ? decimal.Parse(discountPercentage.ToString()) : (decimal?)null, totalPrice);
+
+        return File(pdfBytes, "application/pdf", "invoice.pdf");
+    }
 
 }

@@ -11,20 +11,18 @@
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
-
     <link href="css/tiny-slider.css" rel="stylesheet">
+
     <style>
        body {
-    font-family: Arial, sans-serif;
-    background-color: #f8f9fa;
-    margin: 0;
-    padding: 0;
-}
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
 
         .user-avatar {
             margin-left:42%;
@@ -32,197 +30,174 @@
             height: 70px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid #ddd; /* Optional: Adds a border around the image */
+            border: 2px solid #ddd;
         }
 
-.container {
-    width: 80%;
-    margin: auto;
-    padding-top: 50px;
-}
+        .container {
+            width: 80%;
+            margin: auto;
+            padding-top: 50px;
+        }
 
-.content-wrapper {
-    display: flex;
-    justify-content: space-between;
+        .content-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
 
-    margin-bottom: 40px;
-}
+        .product-details, .reviews-section {
+            flex: 1;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-.product-details, .reviews-section {
-    flex: 1;
-    background-color: #fff;
-    padding: 20px;
+        .product-details {
+            max-width: 50%;
+        }
 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+        .product-details .product-image-section {
+            position: relative;
+            text-align: center;
+        }
 
-.product-details {
-    max-width: 50%;
-}
+        .product-details .product-image {
+            max-width: 100%;
+            height: auto;
+        }
 
-.product-details .product-image-section {
-    position: relative;
-    text-align: center;
-}
+        .product-details .order-now-button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            position: absolute;
+            top: 80px;
+            left: 290px;
+        }
 
-.product-details .product-image {
-    max-width: 100%;
-    height: auto;
-}
+        .product-details .order-now-button over {
+            background-color: #218838;
+        }
 
-.product-details .order-now-button {
-    background-color: #28a745;
-    color: white;
-    padding: 10px 20px;
-    border: none;
- 
-    font-size: 18px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    position: absolute;
-    top: 80px;
-    left: 290px;
-}
+        .product-description {
+            margin-top: 20px;
+        }
 
-.product-details .order-now-button i {
-    margin-right: 5px;
-}
+        .product-description h1 {
+            margin: 0;
+            font-size: 24px;
+        }
 
-.product-details .order-now-button:hover {
-    background-color: #218838;
-}
+        .product-description p {
+            margin: 5px 0;
+            font-size: 18px;
+        }
 
-.product-description {
-    margin-top: 20px;
-}
+        .reviews-section {
+            max-width: 50%;
+            overflow: hidden;
+        }
 
-.product-description h1 {
-    margin: 0;
-    font-size: 24px;
-}
+        .review-slide {
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            max-height: 400px;
+        }
 
-.product-description p {
-    margin: 5px 0;
-    font-size: 18px;
-}
+        .review {
+            background-color: #f1f1f1;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-width: 280px;
+        }
 
-.reviews-section {
-    max-width: 50%;
-    overflow: hidden;
-}
+        .star-rating {
+            color: #f5c518;
+            display: inline-flex;
+            font-size: 24px;
+        }
 
-.review-slide {
+        .star-rating i {
+            margin-right: 2px;
+        }
 
-    overflow-x: auto;
-    scroll-behavior: smooth;
-   
-    max-height: 400px; /* Set a fixed height */
-}
+        .review-form {
+            margin-top: 40px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-.review-slide::-webkit-scrollbar {
-    display: none;
-}
+        .review-form textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            resize: none;
+        }
 
-.review {
-    background-color: #f1f1f1;
-    padding: 15px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    flex: 0 0 48%;
-    min-width: 280px;
-}
+        .review-form button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: block;
+        }
 
-.review p {
-    margin: 5px 0;
-}
+        .review-form button over {
+            background-color: #0056b3;
+        }
 
-.star-rating {
-    color: #f5c518;
-    display: inline-flex;
-    font-size: 24px;
-}
+        .star-rating input {
+            display: none;
+        }
 
-.star-rating i {
-    margin-right: 2px;
-}
+        .star-rating label {
+            font-size: 30px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
 
-.star-rating i.far {
-    color: #ddd;
-}
+        .star-rating input:checked ~ label,
+        .star-rating label over,
+        .star-rating label over ~ label {
+            color: #f5c518;
+        }
 
-.review-form {
-    margin-top: 40px;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
+        .star-rating label over {
+            transform: scale(1.2);
+        }
 
-.review-form textarea {
-    width: 100%;
-    height: 100px;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    resize: none;
-}
+        media (max-width: 768px) {
+            .container {
+                width: 90%;
+            }
 
-.review-form button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    font-size: 18px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    display: block;
-   
-}
+            .product-details, .reviews-section {
+                max-width: 100%;
+            }
 
-.review-form button:hover {
-    background-color: #0056b3;
-}
+            .product-details .product-image {
+                max-width: 100%;
+            }
 
-.star-rating input {
-    display: none;
-}
-
-.star-rating label {
-    font-size: 30px;
-    color: #ddd;
-    cursor: pointer;
-    transition: color 0.2s ease;
-}
-
-.star-rating input:checked ~ label,
-.star-rating label:hover,
-.star-rating label:hover ~ label {
-    color: #f5c518;
-}
-
-.star-rating label:hover {
-    transform: scale(1.2);
-}
-
-media (max-width: 768px) {
-    .container {
-        width: 90%;
-    }
-
-    .product-details, .reviews-section {
-        max-width: 100%;
-    }
-
-    .product-details .product-image {
-        max-width: 100%;
-    }
-
-    .review-form button {
-        width: 100%;
-    }
-}
-   </style>
+            .review-form button {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -250,7 +225,7 @@ media (max-width: 768px) {
                     <div class="product-description">
                         <h1>@Model.Product.ProductName</h1>
                         <p><strong>Description:</strong> @Model.Product.Description</p>
-                        <p><strong>Price:</strong> $@Model.Product.Price.ToString("0.00")</p>
+                        <p><strong>Price:</strong>₹@Model.Product.Price.ToString("0.00")</p>
                     </div>
                 }
                 else
@@ -269,17 +244,12 @@ media (max-width: 768px) {
                         {
                             var username = Model.Users.FirstOrDefault(u => u.UserId == review.UserId)?.Username ?? "Unknown";
                             <div class="review">
-                               
-                               
-                        @*         <p><strong>@username</strong> </p> *@
                                 <p>
                                     <img src="~/images/IMG-20230802-WA0024.jpg" alt="User Avatar" class="user-avatar" />
                                 </p>
-
                                 <p><strong>@review.CreatedAt?.ToString("MMMM dd, yyyy h:mm tt")</strong> </p>
                                 <p> @review.ReviewText</p>
                                 <p>
-
                                     <span class="star-rating" style="margin-left:34%;">
                                         @for (var i = 0; i < review.Rating; i++)
                                         {
@@ -291,7 +261,6 @@ media (max-width: 768px) {
                                         }
                                     </span>
                                 </p>
-
                             </div>
                         }
                     </div>
@@ -311,49 +280,47 @@ media (max-width: 768px) {
                 <form asp-action="SubmitReview" method="post">
                     <input type="hidden" name="ProductId" value="@Model.Product?.ProductId" />
                     <input type="hidden" name="UserId" value="@User.FindFirst("UserID")?.Value" />
-                    
+
                     <!-- Star Rating Input -->
                     <div class="star-rating">
                         @for (int i = 1; i <= 5; i++)
                         {
                             <input type="radio" id="star-@i" name="Rating" value="@i" />
-                            <label for="star-@i" title="@i stars">
-                                <i class="fas fa-star"></i>
-                            </label>
+                            <label for="star-@i" class="fa fa-star"></label>
                         }
                     </div>
 
-                    <!-- Review Text -->
-                    <textarea name="ReviewText" placeholder="Write your review here..." required></textarea><br />
-
-                    <!-- Submit Button -->
+                    <textarea name="ReviewText" placeholder="Write your review..."></textarea>
                     <button type="submit">Submit Review</button>
                 </form>
             </div>
         }
-        else
-        {
-            <p>You need to be logged in to leave a review. <a href="/Account/Login">Login here</a>.</p>
-        }
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const slider = document.getElementById('review-slider');
-            let scrollAmount = 0;
-
-            setInterval(() => {
-                if (scrollAmount >= slider.scrollWidth - slider.clientWidth) {
-                    scrollAmount = 0;
-                } else {
-                    scrollAmount += 2;
-                }
-                slider.scrollTo({
-                    left: scrollAmount,
-                    behavior: 'smooth'
+        $(document).ready(function () {
+            $('.star-rating input').on('change', function () {
+                var ratingValue = $(this).val();
+                $(this).siblings('label').each(function (index) {
+                    if (index < ratingValue) {
+                        $(this).css('color', '#f5c518');
+                    } else {
+                        $(this).css('color', '#ddd');
+                    }
                 });
-            }, 50);
+            });
+
+            // Initialize star colors for existing ratings
+            $('.star-rating input:checked').each(function () {
+                var ratingValue = $(this).val();
+                $(this).siblings('label').each(function (index) {
+                    if (index < ratingValue) {
+                        $(this).css('color', '#f5c518');
+                    } else {
+                        $(this).css('color', '#ddd');
+                    }
+                });
+            });
         });
     </script>
 </body>

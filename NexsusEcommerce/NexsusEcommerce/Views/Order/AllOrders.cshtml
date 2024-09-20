@@ -1,0 +1,135 @@
+﻿@model IEnumerable<NexsusEcommerce.Models.Order>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Orders</title>
+    <style>
+        /* wwwroot/css/order-details.css */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            text-align: left;
+        }
+
+        .status-button {
+            background-color: yellowgreen;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            height: 48px;
+            width: 150px;
+        }
+
+        .status-button1 {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            height: 48px;
+            width: 150px;
+        }
+
+            .status-button1:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <h1>All Orders</h1>
+    <form asp-action="AllReturnOrders" method="post" style="display:inline;">
+
+      <button type="submit" class="action-button cancel-button">Show Return Requests</button>
+      </form>
+    <table>
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Product ID</th>
+                <th>Product Name</th>
+                <th>Quantity</th>
+                <th>Total Price</th>
+                <th>Order Date</th>
+                <th>Status</th>
+                <th>Description</th>
+                <th>Product Image</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.OrderId</td>
+                    <td>@order.ProductId</td>
+                    <td>@order.Product.ProductName</td>
+                    <td>@order.Quantity</td>
+                    <td>@order.TotalPrice</td>
+                    <td>@order.OrderDate?.ToShortDateString()</td>
+                    <td>@order.Status</td>
+                    <td>@order.Product.Description</td>
+                    <td>
+                        @if (order.Product.ImageData != null)
+                        {
+                            <img src="data:image/jpeg;base64,@Convert.ToBase64String(order.Product.ImageData)" alt="@order.Product.ProductName" style="width:100px;height:100px;" />
+                        }
+                    </td>
+                    <td>
+                        @if (order.Status != "Delivered")
+                        {
+                            <button type="button" class="status-button1" onclick="returnProduct(@order.OrderId)">Mark as Delivered</button>
+                        }
+                        else
+                        {
+                            <button class="status-button" disabled>Delivered</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        function returnProduct(orderId) {
+            $.ajax({
+                url: '@Url.Action("UpdateStatus", "Order")',
+                type: 'POST',
+                data: {
+                    orderId: orderId,
+                    status: 'Delivered'
+                },
+                success: function () {
+                    // Display an alert message on successful response
+                    alert("Operation was successful!");
+
+                    // Optionally update the UI to reflect the new status
+                    location.reload(); // Reload the page to reflect the new status
+                },
+                error: function (xhr, status, error) {
+                    // Display an alert message if there's an error
+                    alert("An error occurred: " + error);
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

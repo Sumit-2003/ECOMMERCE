@@ -1,0 +1,125 @@
+﻿@model IEnumerable<NexsusEcommerce.Models.ReturnOrder>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Return Orders</title>
+    <link rel="stylesheet" href="~/css/return-orders.css" />
+    <style>
+        /* wwwroot/css/return-orders.css */
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .action-button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .action-button:hover {
+            background-color: #0056b3;
+        }
+
+        .confirm-button {
+            background-color: #28a745;
+        }
+
+        .confirm-button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Return Orders</h1>
+
+    <div class="container">
+        @if (Model.Any())
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Return Order ID</th>
+                        <th>Order ID</th>
+                        <th>Product ID</th>
+                        <th>User ID</th>
+                        <th>Quantity</th>
+                        <th>Product Name</th>
+                        <th>Action</th>
+                        <th>Reason</th>
+                        <th>Created At</th>
+                        <th>Confirm</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var returnOrder in Model)
+                    {
+                        <tr>
+                            <td>@returnOrder.ReturnOrderId</td>
+                            <td>@returnOrder.OrderId</td>
+                            <td>@returnOrder.ProductId</td>
+                            <td>@returnOrder.UserId</td>
+                            <td>@returnOrder.Quantity</td>
+                            <td>@returnOrder.ProductName</td>
+                            <td>@returnOrder.Action</td>
+                            <td>@returnOrder.Reason</td>
+                            <td>@returnOrder.CreatedAt?.ToShortDateString()</td>
+                            <td>
+                                <!-- Form for confirming a return -->
+                                <form asp-action="ConfirmReturnOrder" method="post" style="display:inline;">
+                                    <input type="hidden" name="returnOrderId" value="@returnOrder.ReturnOrderId" />
+                                    <button type="submit" class="action-button confirm-button" onclick="return confirm('Are you sure you want to confirm this return order?');">Confirm</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No return orders found.</p>
+        }
+    </div>
+</body>
+</html>

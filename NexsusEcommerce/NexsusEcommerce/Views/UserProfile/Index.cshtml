@@ -1,0 +1,298 @@
+﻿@model NexsusEcommerce.Models.UserProfileViewModel
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="css/tiny-slider.css" rel="stylesheet">
+    <link href="css/Index.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        /* Overlay styles for return form */
+        .overlay {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .return-form {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 400px;
+        }
+
+            .return-form input, .return-form textarea, .return-form button {
+                display: block;
+                margin-top: 10px;
+            }
+
+            .return-form textarea {
+                width: 100%;
+                height: 100px;
+            }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        .personal-info, .orders-section {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+            .orders-table th, .orders-table td {
+                border: 1px solid #ddd;
+                padding: 10px;
+                text-align: center;
+            }
+
+            .orders-table th {
+                background-color: #f4f4f4;
+                color: #333;
+            }
+
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+
+        .action-button {
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+            .action-button:hover {
+                background-color: #218838;
+            }
+
+        .cancel-button {
+            background-color: #dc3545;
+        }
+
+            .cancel-button:hover {
+                background-color: #c82333;
+            }
+
+        .return-button {
+            background-color: #007bff;
+        }
+
+            .return-button:hover {
+                background-color: #0056b3;
+            }
+
+        .orders-section p {
+            font-size: 16px;
+            color: #333;
+        }
+
+        .alert {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="personal-info">
+        <h2>Personal Information</h2>
+        <p><strong>Username:</strong> @Model.Username</p>
+        <p><strong>Email:</strong> @Model.Email</p>
+        <p><strong>City:</strong> @Model.City</p>
+    </div>
+
+    <div class="orders-section">
+        <h2>Orders</h2>
+        @if (Model.Orders.Any())
+        {
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Quantity</th>
+                        <th>Total Price</th>
+                        <th>Order Date</th>
+                        <th>Description</th>
+                        <th>Product Image</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td>@order.ProductId</td>
+                            <td>@order.ProductName</td>
+                            <td>@order.Quantity</td>
+                            <td>@order.TotalPrice</td>
+                            <td>@order.OrderDate?.ToShortDateString()</td>
+                            <td>@order.Description</td>
+                            <td>
+                                @if (order.ImageData != null)
+                                {
+                                    <img src="data:image/jpeg;base64,@Convert.ToBase64String(order.ImageData)" alt="@order.ProductName" class="product-image" />
+                                }
+                            </td>
+                            <td>@order.Status</td>
+                            <td>
+                                @if (order.Status == null)
+                                {
+                                    <form asp-action="CancelOrder" method="post" style="display:inline;">
+                                        <input type="hidden" name="orderId" value="@order.OrderId" />
+                                        <button type="submit" class="action-button cancel-button" onclick="return confirm('Are you sure you want to cancel this order?');">Cancel Order</button>
+                                    </form>
+                                }
+                                else if (order.Status == "Delivered")
+                                {
+                                    <button type="button" class="action-button return-button" onclick="showReturnForm('@order.OrderId', '@order.ProductName', @order.Quantity)">Return Product</button>
+                                }
+                                else if (order.Status == "Cancelled")
+                                {
+                                    <button type="button" class="action-button return-button" disabled>Cancelled</button>
+                                }
+                                else if (order.Status == "Returned")
+                                {
+                                    <button type="button" class="action-button return-button" disabled>Returned</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No orders found.</p>
+        }
+    </div>
+
+    <!-- Overlay for return form -->
+    <div id="overlay" class="overlay">
+        <div id="returnForm" class="return-form">
+            <h2>Return Product</h2>
+            <div id="messageArea" class="alert" style="display: none;"></div> <!-- Move alert inside the form -->
+            <form asp-action="ReturnProduct" method="post" id="returnProductForm">
+                <input type="hidden" id="returnOrderId" name="orderId" />
+                <input type="hidden" id="returnProductId" name="productId" />
+                <label for="quantity">Quantity:</label>
+                <input type="number" id="returnQuantity" name="quantity" min="1" required />
+                <label for="action">Action:</label>
+                <select id="returnAction" name="action" required>
+                    <option value="Returned">Return</option>
+                    <option value="Refunded">Refund</option>
+                </select>
+                <label for="reason">Reason:</label>
+                <textarea id="returnReason" name="reason" placeholder="Enter reason for return" required></textarea>
+                <button type="submit" class="action-button return-button">Submit Return</button>
+                <button type="button" onclick="hideReturnForm()" class="action-button cancel-button">Cancel</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function showReturnForm(orderId, productName, deliveredQuantity) {
+            $('#returnOrderId').val(orderId);
+            $('#returnProductId').val(orderId); // Update if needed
+            $('#returnQuantity').attr('max', deliveredQuantity); // Set max quantity based on delivered amount
+            $('#returnQuantity').val(''); // Clear previous input
+            $('#messageArea').hide(); // Hide message area when opening the form
+            $('#overlay').show(); // Show overlay
+        }
+
+        function hideReturnForm() {
+            $('#overlay').hide(); // Hide overlay
+        }
+
+        $(document).ready(function () {
+            $("#returnProductForm").on("submit", function (event) {
+                event.preventDefault(); // Prevent the default form submission
+
+                var form = $(this);
+                var url = form.attr("action");
+                var formData = form.serialize(); // Serialize form data
+
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: formData,
+                    success: function (response) {
+                        var messageArea = $("#messageArea");
+                        messageArea.show(); // Show the message area
+
+                        if (response.Success) {
+                            messageArea.removeClass("alert-error").addClass("alert-success");
+                            messageArea.text(response.Message); // Display success message
+                            $(".return-button").text("Request Sent").prop("disabled", true);
+                            hideReturnForm(); // Hide the return form
+                        } else {
+                            messageArea.removeClass("alert-success").addClass("alert-error");
+                            messageArea.text(response.Message); // Display error message
+                        }
+                    },
+                    error: function () {
+                        var messageArea = $("#messageArea");
+                        messageArea.show(); // Show the message area
+                        messageArea.removeClass("alert-success").addClass("alert-error");
+                        messageArea.text("An unexpected error occurred."); // Display error message
+                    }
+                });
+            });
+        });
+
+    </script>
+
+</body>
+</html>

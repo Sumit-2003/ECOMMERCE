@@ -29,5 +29,7 @@ public partial class Product
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 
+    public virtual ICollection<ReturnOrder> ReturnOrders { get; set; } = new List<ReturnOrder>();
+
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 }

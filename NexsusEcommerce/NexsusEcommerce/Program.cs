@@ -21,7 +21,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LoginPath = "/Account/Login"; // Redirect to the login page
         options.AccessDeniedPath = "/Account/AccessDenied"; // Redirect to access denied page
     });
-
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(1);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 // Register Captcha
 builder.Services.AddCaptcha(options =>
 {

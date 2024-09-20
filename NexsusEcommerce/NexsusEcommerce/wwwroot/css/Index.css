@@ -1,6 +1,6 @@
 ﻿/*
 * Template Name: UntreeStore
-* Template Author: Untree.co
+* Template Author: Untree.cos
 * Author URI: https://untree.co/
 * License: https://creativecommons.org/licenses/by/3.0/
 */
@@ -39,7 +39,7 @@ a {
     }
 
 .custom-navbar {
-    background: #3b5d50 !important;
+   background-color:#dce5e4;
     padding-top: 20px;
     padding-bottom: 20px;
 }
