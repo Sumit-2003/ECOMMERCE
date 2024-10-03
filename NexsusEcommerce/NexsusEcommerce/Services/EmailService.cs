@@ -8,9 +8,9 @@ public class EmailService : IEmailService
 {
     private readonly string _smtpServer = "smtp.gmail.com";
     private readonly int _smtpPort = 587;
-    private readonly string _smtpUser = "dhomsesumit36@gmail.com";
-    private readonly string _smtpPass = "mpyh fvij wkpm vnax";
-    private readonly string _fromEmail = "dhomsesumit36@gmail.com";
+    private readonly string _smtpUser = "Add your email";
+    private readonly string _smtpPass = "Add your credential";
+    private readonly string _fromEmail = "Add your email";
     private readonly string _fromName = "NexsusEcommerce";
 
     public async Task SendEmailAsync(string toEmail, string subject, string body)
